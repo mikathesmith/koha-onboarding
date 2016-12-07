@@ -2,7 +2,7 @@
 [% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 <div>
-<h1 id="logo"><img alt="Koha" src="[% interface %]/[% theme %]/img/koha.org-logo.gif" /> Web installer &rsaquo; Step 3</h1>
+<h1 id="logo"><img alt="Koha" src="[% interface %]/[% theme %]/img/koha.org-logo.gif" /> Koha web  installer &rsaquo; Step 3</h1>
 
 [% IF ( selectframeworks ) %]
     <script type="text/javascript">
@@ -70,12 +70,12 @@
     <h2 align="center">Select your MARC flavor</h2>
     <form name="frameworkselection" method="post" action="install.pl">
     <input type="hidden" name="step" value="3" />
-    <input type="hidden" name="op" value="selectframeworks" />
+    <input type="hidden" name="op" value="selectframeworks"/>
     <p>
     [% FOREACH flavourloo IN flavourloop %]
     <div>
             [% IF ( flavourloo.checked ) %]
-                <input type="radio" name="marcflavour" value="[% flavourloo.code %]" checked /> [% flavourloo.label %] <br/>
+                <input type="radio" name="marcflavour" value="[% flavourloo.code %]" checked="checked" /> [% flavourloo.label %] <br/>
             [% ELSE %]
                 <input type="radio" name="marcflavour" value="[% flavourloo.code %]" /> [% flavourloo.label %] <br/>
             [% END %]
@@ -89,8 +89,8 @@
 [% IF ( selectframeworks ) %]
     <h2 align="center">Selecting Default Settings</h2>
     <script type="text/javascript">
-        var linklabel = _("Select all sample data");
-        document.write('<p><a href="#" onclick="return selectAllFrameworks();">'+linklabel+'</a></p>');
+        var linklabel = _("Select all options");
+        document.write('<p><a href="#" onclick="return selectAllFrameworks();"><button>'+linklabel+'</button></a></p>');
     </script>
     <form name="frameworkselection" method="post" action="install.pl">
     <input type="hidden" name="step" value="3" />
@@ -108,19 +108,32 @@
     [% FOREACH framework IN frameworksloo.frameworks %]
         <table style="border:1px;vertical-align:top;">
         <tr>
-        <td style="vertical-align:top;">
-            [% IF ( framework.checked ) %]
-                <input type="checkbox" name="framework" value="[% framework.fwkfile %]" checked="checked" id="[% framework.fwkname %]" />
-            [% ELSE %]
-                <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id="[% framework.fwkname %]" />
-            [% END %]
+         <td style = "border:1px; vertical-align:top;">
+         [% IF (frameworksloo.label == "Mandatory" ) %]   
+            <ul>
+            </ul>
+         [% ELSE %]
+            <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id =="[%framework.fwkname%]" />
+         [% END %]
         </td>
         <td>
+        [% IF (frameworksloo.label == "Mandatory" ) %]
+        <ul>
             <label for="[% framework.fwkname %]">
+               <li> [% framework.fwkdescription %]</li>
+                 <em>([% framework.fwkname %])</em>   
+            </label>
+            </ul>
+         </td>
+        [% ELSE %]
+        <td>
+            <label for= "[% framework.fwkname %]">
                 [% framework.fwkdescription %]
                 <em>([% framework.fwkname %])</em>
             </label>
         </td>
+        [% END %]
+        </tr>
         </table>
     [% END %]
     </div>
@@ -139,7 +152,7 @@
         <tr>
         <td style="vertical-align:top;">
             [% IF ( framework.checked ) %]
-                <input type="checkbox" name="framework" value="[% framework.fwkfile %]" checked="checked" id="[% framework.fwkname %]" />
+                <input type="checkbox" name="framework" value="[% framework.fwkfile %]"  id="[% framework.fwkname %]" />
             [% ELSE %]
                 <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id="[% framework.fwkname %]" />
             [% END %]
@@ -217,9 +230,10 @@
             We are upgrading from Koha [% dbversion %] to [% kohaversion %], you must <a href="install.pl?step=3&amp;op=updatestructure" class="button">update your database</a>
         </p>
     [% ELSE %]
-        <p>We are ready to do some basic configuration. Please
-            <a href="install.pl?step=3&amp;op=choosemarc" class="button">install basic configuration settings</a>
-            to continue the installation.
+        <p>We are ready to do some basic configuration. Please install some basic configuration settings to continue the installation:
+        <br>
+        <br>
+            <a href="install.pl?step=3&amp;op=choosemarc" class="button"><button>Install basic configuration settings</button></a>
         </p>
     [% END %]
 [% END %]
