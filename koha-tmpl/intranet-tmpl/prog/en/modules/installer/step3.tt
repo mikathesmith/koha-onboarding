@@ -110,15 +110,16 @@
         <table style="border:1px;vertical-align:top;">
         <tr>
          <td style = "border:1px; vertical-align:top;">
-         [% IF (frameworksloo.label == "default" ) %]
-            <ul>
-            </ul>
+         [% IF (frameworksloo.label == "Default") %]   
+         <ul>
+         </ul>
          [% ELSE %]
+         the
             <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id =="[%framework.fwkname%]" />
          [% END %]
         </td>
         <td>
-        [% IF (frameworksloo.label == "default" ) %]
+        [% IF (frameworksloo.label == "Default") %]
         <ul>
             <label for="[% framework.fwkname %]">
                <li> [% framework.fwkdescription %]</li>
@@ -152,18 +153,31 @@
         <table style="border:1px;vertical-align:top;">
         <tr>
         <td style="vertical-align:top;">
-            [% IF ( framework.checked ) %]
-                <input type="checkbox" name="framework" value="[% framework.fwkfile %]"  id="[% framework.fwkname %]" />
-            [% ELSE %]
-                <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id="[% framework.fwkname %]" />
-            [% END %]
+        [% IF (levelloo.label == "Default" ) %]
+            <ul>
+            </ul>
+        [% ELSE %]
+            <input type="checkbox" name="framework" value="[%framework.fwk %]" id=="[%framework.fwkname%]"/>
+        [% END %]
         </td>
         <td>
+        [% IF (levelloo.label == "Default") %]
+            <ul>
             <label for="[% framework.fwkname %]">
-                [% framework.fwkdescription %]
+               <li> [% framework.fwkdescription %]</li>
                 <em>([% framework.fwkname %])</em>
             </label>
+            </ul>
         </td>
+        [% ELSE %]
+        <td>
+            <label for= "[% framework.fwkname %]">
+            [% framework.fwkdescription %]
+            <em>([% framework.fwkname %])</em>
+            </label>
+        </td>
+        [% END %]
+        </tr>
         </table>
     [% END %]
     </div>
