@@ -110,7 +110,7 @@
         <table style="border:1px;vertical-align:top;">
         <tr>
          <td style = "border:1px; vertical-align:top;">
-         [% IF (frameworksloo.label == "Mandatory" ) %]   
+         [% IF (frameworksloo.label == "default" ) %]
             <ul>
             </ul>
          [% ELSE %]
@@ -118,7 +118,7 @@
          [% END %]
         </td>
         <td>
-        [% IF (frameworksloo.label == "Mandatory" ) %]
+        [% IF (frameworksloo.label == "default" ) %]
         <ul>
             <label for="[% framework.fwkname %]">
                <li> [% framework.fwkdescription %]</li>
