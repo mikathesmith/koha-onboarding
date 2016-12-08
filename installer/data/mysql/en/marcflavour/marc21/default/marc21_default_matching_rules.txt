@@ -1,5 +1,2 @@
 Selected matching rules for MARC 21 bibliographic
-records, including:
-
-ISBN
-ISSN
+records, including: ISBN, ISSN
