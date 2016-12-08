@@ -241,13 +241,15 @@
 [% IF ( default ) %]
     [% IF ( upgrading ) %]
         <p>
-            We are upgrading from Koha [% dbversion %] to [% kohaversion %], you must <a href="install.pl?step=3&amp;op=updatestructure" class="button">update your database</a>
+            We are upgrading from Koha [% dbversion %] to [% kohaversion %], you must update your database. 
+        <br>
+        <a href="install.pl?step=3&amp;op=updatestructure" class="button"><button>Update Database</button></a>        
         </p>
     [% ELSE %]
         <p>We are ready to do some basic configuration. Please install some basic configuration settings to continue the installation:
         <br>
         <br>
-            <a href="install.pl?step=3&amp;op=choosemarc" class="button"><button>Install basic configuration settings</button></a>
+            <a href="install.pl?step=3&amp;op=choosemarc" class="button"><button>Install Basic Configuration Settings</button></a>
         </p>
     [% END %]
 [% END %]
@@ -275,7 +277,7 @@
  [% UNLESS ( has_update_errors ) %]
     <p>Everything went OK, update done.</p>
   [% END %]
-<a href="install.pl?step=3&amp;op=finished" class="button">Continue to log in to Koha</a>
+<a href="install.pl?step=3&amp;op=choosemarc" class="button"><button>Back to Installation</button></a>
   </div>
 [% END %]
 
