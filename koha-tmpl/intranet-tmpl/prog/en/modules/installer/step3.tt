@@ -68,6 +68,7 @@
 [% END %]
 [% IF ( choosemarc ) %]
     <h2 align="center">Select your MARC flavor</h2>
+    <p>MARC stands for Machine Readable Cataloging, containing information about a bibliographic record. MARC21 is more commonly used globally, whereas UNIMARC tends to be used in Europe. </p>
     <form name="frameworkselection" method="post" action="install.pl">
     <input type="hidden" name="step" value="3" />
     <input type="hidden" name="op" value="selectframeworks"/>
