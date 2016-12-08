@@ -97,54 +97,48 @@
     <input type="hidden" name="step" value="3" />
     <input type="hidden" name="op" value="addframeworks" />
 
-    [% IF ( frameworksloop ) %]
-    <h2>MARC frameworks: [% marcflavour %]</h2>
-    [% IF ( en_marc_frameworks ) %]
-        <h4><span class="error">No MARC frameworks are available for your language.
-                Defaulting to the frameworks supplied for English (en)<span></h4>
-    [% END %]
-    [% FOREACH frameworksloo IN frameworksloop %]
-    <div>
-    <h3>[% frameworksloo.label %]</h3>
-    [% FOREACH framework IN frameworksloo.frameworks %]
-        <table style="border:1px;vertical-align:top;">
-        <tr>
+      [% IF ( frameworksloop ) %]
+      <h2>MARC frameworks: [% marcflavour %]</h2>
+      [% IF ( en_marc_frameworks ) %]
+      <h4><span class="error">No MARC frameworks are available for your language.                 Defaulting to the frameworks supplied for English (en)<span></h4>
+      [% END %]
+      [% FOREACH frameworksloo IN frameworksloop %]
+      <div>
+      <h3>[% frameworksloo.label %]</h3>
+      [% FOREACH framework IN frameworksloo.frameworks %]         <table style="border:1px;vertical-align:top;">
+      <tr>
          <td style = "border:1px; vertical-align:top;">
-         [% IF (frameworksloo.label == "Default" ) %]   
-            <ul>
-            </ul>
-         [% ELSE %]
-            <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id =="[%framework.fwkname%]" />
-         [% END %]
-        </td>
-        <td>
-        [% IF (frameworksloo.label == "Default" ) %]
-        <ul>
-            <label for="[% framework.fwkname %]">
-               <li> [% framework.fwkdescription %]</li>
-                 <em>([% framework.fwkname %])</em>   
-            </label>
-            </ul>
-         </td>
+        [% IF (frameworksloo.label == "Default" ) %]                       <input type="checkbox" name="framework" value="[%     framework.fwkfile %]" id =="[%framework.fwkname%]" checked="checked" disabled="disabled" />
         [% ELSE %]
-        <td>
-            <label for= "[% framework.fwkname %]">
-                [% framework.fwkdescription %]
-                <em>([% framework.fwkname %])</em>
-            </label>
-        </td>
-        [% END %]
-        </tr>
+             <input type="checkbox" name="framework" value="[% framework.fwkfile %]" id =="[%framework.fwkname%]" />
+         [% END %]
+      </td>
+      <td>
+      [% IF (frameworksloo.label == "Default" ) %]
+         <label for="[% framework.fwkname %]">
+            [% framework.fwkdescription %]
+            <em>([% framework.fwkname %])</em>
+        </label>
+      </td>
+      [% ELSE %]
+      <td>
+         <label for= "[% framework.fwkname %]">
+            [% framework.fwkdescription %]
+            <em>([% framework.fwkname %])</em>
+        </label>
+      </td>
+      [% END %]
+      </tr>
         </table>
-    [% END %]
-    </div>
-    [% END %]
+      [% END %]
+      </div>
+      [% END %]
     <h2>Other data</h2>
-    [% END %]
-    [% IF ( en_sample_data ) %]
-        <h4><span class="error">No sample data and settings are available for your language.
-                Defaulting to the samples supplied for English (en)<span></h4>
-    [% END %]
+                  [% END %]
+                  [% IF ( en_sample_data ) %]
+                      <h4><span class="error">No sample data and settings ar    e available for your language.
+             132                 Defaulting to the samples supplied for English     (en)<span></h4>
+                 [% END %]
     [% FOREACH levelloo IN levelloop %]
     <div>
     <h3>[% levelloo.label %]</h3>
@@ -153,20 +147,17 @@
         <tr>
         <td style="vertical-align:top;">
         [% IF (levelloo.label == "Default" ) %]
-            <ul>
-            </ul>
+              <input type="checkbox" name="framework" value=    "[% framework.fwkfile %]" checked="checked" disabled= "disabled" id="[%framework.fwkname %]" />
         [% ELSE %]
             <input type="checkbox" name="framework" value="[%framework.fwk %]" id=="[%framework.fwkname%]"/>
         [% END %]
         </td>
         <td>
         [% IF (levelloo.label == "Default") %]
-            <ul>
             <label for="[% framework.fwkname %]">
-               <li> [% framework.fwkdescription %]</li>
+                [% framework.fwkdescription %]
                 <em>([% framework.fwkname %])</em>
             </label>
-            </ul>
         </td>
         [% ELSE %]
         <td>
