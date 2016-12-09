@@ -150,9 +150,9 @@
         <tr>
         <td style="vertical-align:top;">
         [% IF (levelloo.label == "Default" ) %]
-              <input type="hidden" name="framework" value=    "[% framework.fwkfile %]" id="[%framework.fwkname %]" />
+             <input type="hidden" name="framework" value="[% framework.fwkfile %]" id="[%framework.fwkname %]" />
         [% ELSE %]
-            <input type="checkbox" name="framework" value="[%framework.fwk %]" id=="[%framework.fwkname%]"/>
+             <input type="checkbox" name="framework" value="[%framework.fwkfile %]" id=="[%framework.fwkname%]"/> 
         [% END %]
         </td>
         <td>
