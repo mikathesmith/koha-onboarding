@@ -75,10 +75,10 @@
     <p>
     [% FOREACH flavourloo IN flavourloop %]
     <div>
-            [% IF ( flavourloo.checked ) %]
-                <input type="radio" name="marcflavour" value="[% flavourloo.code %]" checked="checked" /> [% flavourloo.label %] <br/>
+            [% IF ( flavourloo.label == "Unimarc") %]
+                 <input type="radio" name="marcflavour" value="[% flavourloo.code %]" /> [% flavourloo.label %]                 <br/>
             [% ELSE %]
-                <input type="radio" name="marcflavour" value="[% flavourloo.code %]" /> [% flavourloo.label %] <br/>
+                 <input type="radio" name="marcflavour" value="[% flavourloo.code %]" checked="checked" /> [% flavourloo.label %] <br/>
             [% END %]
     </div>
     [% END %]
@@ -200,7 +200,8 @@
         <form name="finish">
         <input type="hidden" name="step" value="3" />
         <input type="hidden" name="op" value="finish" />
-        <input type="submit" value="Finish" /></form>
+        <input type="submit" value="Finish"/>
+        </form>
         </p>
     </p>
 [% END %]
