@@ -5,10 +5,9 @@ use warnings;
 use diagnostics;
 
 
-use C4::Koha;
-#Pragmas for creating library
 use Modern::Perl;
-use CGI qw (-utf8);
+use CGI qw ( -utf8 );
+use C4::Koha;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
@@ -18,14 +17,14 @@ use Koha::Libraries;
 use Koha::LibraryCategories;
 
 
-use POSIX;
-use C4::Templates;
-use C4::Languages qw(getAllLanguages getTranslatedLanguages);
-use C4::Installer;
-use Koha;
-use installer::install.pl;
+#use POSIX;
+#use C4::Templates;
+#use C4::Languages qw(getAllLanguages getTranslatedLanguages);
+#use C4::Installer;
+#use Koha;
 
-#Setting variables from install.pl origin
+#Setting variables
+my $input    = new CGI;
 my $query    = new CGI;
 my $step     = $query->param('step');
 
@@ -132,6 +131,8 @@ if ( $step && $step == 1 ) {
         
 }
 
+
+output_html_with_http_headers $input, $cookie, $template->output;
 
 
 
