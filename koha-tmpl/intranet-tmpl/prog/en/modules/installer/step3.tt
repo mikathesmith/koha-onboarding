@@ -66,7 +66,7 @@ function Hide(link)
 
 [% IF ( finish ) %]
 <h1>Congratulations, installation complete</h1>
-<p>If this page does not redirect in 5 seconds, click <a href="/">here</a>.</p>
+<p>If this page does not redirect in 5 seconds, click <a href="/cgi-bin/koha/installer/onboarding.pl">here</a>.</p>
 [% END %]
 
 
