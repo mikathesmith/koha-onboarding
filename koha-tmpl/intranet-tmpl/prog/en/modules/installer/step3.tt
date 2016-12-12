@@ -1,5 +1,5 @@
 [% INCLUDE 'doc-head-open.inc' %]<title>Koha &rsaquo; Web installer &rsaquo; Step 3</title>
-[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
+[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/installer/onboarding.pl">[% END %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 <div>
 <h1 id="logo"><img alt="Koha" src="[% interface %]/[% theme %]/img/koha.org-logo.gif" /> Koha web  installer &rsaquo; Step 3</h1>
@@ -64,7 +64,7 @@
 [% END %]
 [% IF ( finish ) %]
     <h1>Congratulations, installation complete</h1>
-    <p>If this page does not redirect in 5 seconds, click <a href="/">here</a>.</p>
+    <p>If this page does not redirect in 5 seconds, click <a href="/cgi-bin/koha/installer/onboarding.pl">here</a>.</p>
 [% END %]
 [% IF ( choosemarc ) %]
     <h2 align="center">Select your MARC flavor</h2>
