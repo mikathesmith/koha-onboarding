@@ -199,6 +199,7 @@ elsif ( $step && $step == 3 ) {
         # The installer will have to relogin since we do not pass cookie to redirection.
         $template->param( "$op" => 1 );
     }
+
     elsif ( $op && $op eq 'addframeworks' ) {
     #
     # 1ST install, 3rd sub-step : insert the SQL files the user has selected
@@ -250,6 +251,10 @@ elsif ( $step && $step == 3 ) {
         $template->param( "en_sample_data" => $sample_defaulted_to_en);
         $template->param( "levelloop" => $levellist );
         $template->param( "$op"       => 1 );
+     
+        my $setup = $query->param('setup');
+        $template->param( "setup"=> $setup );
+   
     }
     elsif ( $op && $op eq 'choosemarc' ) {
         #
@@ -270,6 +275,7 @@ elsif ( $step && $step == 3 ) {
         # But could also be useful to have some Authorised values data set prepared here.
         # Marcflavour Selection is achieved through radiobuttons.
         my $langchoice = $query->param('fwklanguage');
+
         $langchoice = $query->cookie('KohaOpacLanguage') unless ($langchoice);
 	$langchoice =~ s/[^a-zA-Z_-]*//g;
         my $dir =
