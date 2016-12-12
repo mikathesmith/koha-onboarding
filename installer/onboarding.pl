@@ -12,6 +12,7 @@ use CGI qw (-utf8);
 use C4::Auth;
 use C4::Context;
 use C4::Output;
+use Koha::Patrons;
 use Koha::Items;
 use Koha::Libraries;
 use Koha::LibraryCategories;
@@ -123,15 +124,13 @@ if ( $step && $step == 1 ) {
             }
         }
             $op = 'list';
-        [% END %]
+    }
 
         if ($op eq 'list'){
              print redirect(-url=>'koha/cgi-bin/koha/onboarding/onboarding.cgi?step=2');
         }
-        [% END %]
-[% END %]
-[% END %]
-
+        
+}
 
 
 
