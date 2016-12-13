@@ -129,6 +129,18 @@ if ( $step && $step == 1 ) {
     }
 
         
+}elsif ( $step && $step == 2 ){
+
+    my $createpatroncategory = $query->param('createpatroncategory');
+    $template->param('createpatroncategory'=>$createpatroncategory);
+
+
+
+
+
+
+
+
 }
 
 

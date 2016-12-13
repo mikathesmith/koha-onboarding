@@ -53,13 +53,16 @@
                  <p> Success: Library created!</p>
                  <p> To add another library and for more settings, <br>
                 go to Tools->Administration->Libraries and Groups
-                </div>
-                 Next up:
-                 <input type="submit" value="Add a patron category"/>
+            </div>
+            Next up:
+            <input type="submit" value="Add a patron category"/>
         </form>
-                 <div>
-                    <p> Library was not successfully created</p>
-                </div>
+        
+        <!--Implement if statement to determine if library was succesfully created here....-
+        <div>
+             <p> Library was not successfully created</p>
+        </div>
+        -->
 [% ELSE %]    
 
        <h1 align="left"> New Library</h2>
@@ -81,9 +84,8 @@
                     </li>
                  </ol>
              </fieldset>
-            <fieldset>
-                <input type="submit" class="action" value="Next &gt;&gt;"/>
-            </fieldset>
+             <br>
+             <input type="submit" class="action" value="Next &gt;&gt;"/>
      </form>
 [% END %]        
 
