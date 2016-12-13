@@ -134,10 +134,10 @@ if ( $step && $step == 1 ) {
     my $createpatroncategory = $query->param('createpatroncategory');
     $template->param('createpatroncategory'=>$createpatroncategory);
 
+}elsif ( $step && $step == 3 ){
 
-
-
-
+    my $createpatron = $query->param('createpatron');
+    $template->param('createpatron'=>$createpatron);
 
 
 

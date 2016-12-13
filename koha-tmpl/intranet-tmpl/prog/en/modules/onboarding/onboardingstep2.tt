@@ -7,8 +7,8 @@
 
 [% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
-<!--[% INCLUDE 'calendar.inc' %]
-[% INCLUDE 'datatables.inc' %]-->
+[% INCLUDE 'calendar.inc' %]
+[% INCLUDE 'datatables.inc' %]
 
 
 <head>
@@ -55,13 +55,13 @@
                 <ol>
                     <li>
                         <label for="categorycode" class="required">Category code: </label>
-                        <input type="text" name="categorycode" id="categorycode" size="10" maxlength="10" class="required" re    quired="required" />
+                        <input type="text" name="categorycode" id="categorycode" size="10" maxlength="10" class="required" required="required" />
                         <span class="required">Required</span>
                     </li>
 
                     <li>
                         <label for="description" class="required">Description: </label>
-                        <input type="text" name="description" id="description" size="40" maxlength="80" class="required" requ    ired="required" value="[% category.description |html %]" />
+                        <input type="text" name="description" id="description" size="40" maxlength="80" class="required" required="required" value="[% category.description |html %]" />
                         <span class="required">Required</span>
                     </li>
 
@@ -128,7 +128,7 @@
 
                     <li>
                         <label for="default_privacy">Default privacy: </label>
-                        <select id="default_privacy" name="default_privacy">
+                        <select id="default_privacy" name="default_privacy" required="required">
                             [% SET default_privacy = 'default' %]
 
                             [% IF category %]
