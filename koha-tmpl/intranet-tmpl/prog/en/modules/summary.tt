@@ -13,7 +13,7 @@
     <div id="bd">
         <div id="yui-main" class="sysprefs">
             <div class="yui-g"><h1>Tutorial Summary Page</h1></div>
-            <fieldset>
+            <fieldset style="font-size:120%">
             <h2>Library</h2>
             <p> To add another library and for more settings, go to </br>
             More > Administration > Libraries and Groups </p>
