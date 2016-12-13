@@ -58,10 +58,13 @@ my $dbh = DBI->connect(
 
 
 
-
 #Performing each step of the onboarding tool
 if ( $step && $step == 1 ) {
 #This is the Initial step of the onboarding tool to create a library 
+
+
+    my $createlibrary = $query->param('createlibrary');
+    $template->param('createlibrary'=>$createlibrary);
 
 #store inputted parameters in variables
     my $branchcode       = $input->param('branchcode');
@@ -125,9 +128,6 @@ if ( $step && $step == 1 ) {
             $op = 'list';
     }
 
-        if ($op eq 'list'){
-             print redirect(-url=>'koha/cgi-bin/koha/onboarding/onboarding.cgi?step=2');
-        }
         
 }
 

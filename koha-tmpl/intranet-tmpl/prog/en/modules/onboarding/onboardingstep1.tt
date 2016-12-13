@@ -1,7 +1,8 @@
-
-
 <!--Includes for creating library--> 
 [% INCLUDE 'doc-head-open.inc' %]
+
+[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
+[% INCLUDE 'installer-doc-head-close.inc' %]
 
 <head>
 <title>Welcome &rsaquo; to  &rsaquo; Koha</title>
@@ -35,24 +36,38 @@
 </script>
 </head>
 
-[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
-[% INCLUDE 'installer-doc-head-close.inc' %]
 <div>
     <h1 align="center"> Welcome to Koha</h1>
-    <h1 id="logo"><img alt="Koha" src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
-    <form name="startonboarding" method="post" action="onboarding.pl">
-    <input type="hidden" name="step" value="0">
-    <a href="onboarding.pl?setupmyKoha=yes" <button>Set up my koha</button></a>
+    <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
+    <h2> We're just going to set up a few things</h2>
 </div>
+ 
+<!--Create a library screen 2-->
+[% IF (createlibrary) %]
+        <!--New Library created-->
+        <form name="createlibrary" method="post" action="onboarding.pl">
+            <input type="hidden" name="step" value="2"/>
+            <h1 align="left"> New Library</h1>
 
-<!--Onboarding tool step 1 - Create a new library screen 1-->
-[% IF (setupmyKoha) %]
-    <h1 align="left"> New Library</h2>
+            <div>   
+                 <p> Success: Library created!</p>
+                 <p> To add another library and for more settings, <br>
+                go to Tools->Administration->Libraries and Groups
+                </div>
+                 Next up:
+                 <input type="submit" value="Add a patron category"/>
+        </form>
+                 <div>
+                    <p> Library was not successfully created</p>
+                </div>
+[% ELSE %]    
+
+       <h1 align="left"> New Library</h2>
         <form name="LibraryCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="1"/>
                  <input type="hidden" name="op" value="add_validate" />
-                 <input type="hidden" name="op" value="createlibrary"/>
+                 <input type="hidden" name="createlibrary" value="createlibrary"/>
                  <ol>
                      <li>
                         <label for="branchcode" class="required">Library code: </label>
@@ -61,41 +76,16 @@
                     </li>
                     <li>
                         <label for="branchname" class="required">Name: </label>
-                        <input type="text" name="branchname" id="branchname" size="80" value="[% library.branchname |html %]" class="    required" required="required" />
+                        <input type="text" name="branchname" id="branchname" size="80" value="[% library.branchname |html %]" class="    required" required="required" style="width:200px;">
                         <span class="required">Required</span>
                     </li>
                  </ol>
              </fieldset>
-            <fieldset class="action">
-                <input type="submit" value="Create Library"/>
+            <fieldset>
+                <input type="submit" class="action" value="Next &gt;&gt;"/>
             </fieldset>
      </form>
-[% END %]
-
-<!--Create a library screen 2-->
-[% IF (createlibrary) %]
-    [% IF (library) %]
-        <!--New Library created-->
-        <form name="createlibrary" method="post" action="onboarding.pl">
-            <input type="hidden" name="step" value="1"/>
-            <input type="hidden" name="op" value="addpatroncategory"/>
-            <h1 align="left"> New Library</h1>
-
-            <div>   
-                 <p> Success: Library created!</p><br>
-                 <p> To add another library and for more settings, <br>
-                go to Tools->Administration->Libraries and Groups
-                </div>
-                 Next up:
-                 <input type="submit" value="Add a patron category"/>
-             </form>
-         [% ELSE %] <!-- Library not created successfully-->
-                 <div>
-                    <p> Library was not successfully created</p>
-                 </div>
-         [% END %]
-    [% END %]
-
+[% END %]        
 
 
 
