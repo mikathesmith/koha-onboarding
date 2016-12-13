@@ -1,4 +1,4 @@
-<!--Includes for creating library--> 
+<!--Includes for creating patron--> 
 [% INCLUDE 'doc-head-open.inc' %]
 
 [% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
@@ -18,7 +18,7 @@
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
  
-<!--Create a patron screen 3-->
+<!--Create a patron screen 2-->
 [% IF (createpatron) %]
         <!--New patron created-->
         <form name="createpatron" method="post" action="onboarding.pl">
@@ -37,7 +37,7 @@
                     <p> Oh no! Patron was not created</p>
                 </div>
 [% ELSE %]    
-
+<!--Create a patron screen 1-->
        <h1 align="left"> New Patron </h2>
         <form name="PatronCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">

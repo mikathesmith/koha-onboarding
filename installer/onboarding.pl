@@ -58,6 +58,16 @@ my $dbh = DBI->connect(
 
 
 
+      my $op = $query->param('op');
+      $template->param('op'=>$op);
+      warn $op;
+      if ( $op && $op eq 'finish' ) {
+         print $query->redirect("/cgi-bin/koha/mainpage.pl");
+         exit;
+      }
+
+
+
 #Performing each step of the onboarding tool
 if ( $step && $step == 1 ) {
 #This is the Initial step of the onboarding tool to create a library 
@@ -139,12 +149,27 @@ if ( $step && $step == 1 ) {
     my $createpatron = $query->param('createpatron');
     $template->param('createpatron'=>$createpatron);
 
+}elsif ( $step && $step == 4){
+
+    my $createitemtype = $query->param('createitemtype');
+    $template->param('createitemtype'=>$createitemtype);
+
+}elsif ( $step && $step == 5){
+
+    my $createcirculationrule = $query->param('createcirculationrule');
+    $template->param('createcirculationrule'=>$createcirculationrule);
 
 
 }
 
 
+
+
+
+
+
 output_html_with_http_headers $input, $cookie, $template->output;
+
 
 
 
