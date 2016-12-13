@@ -1,0 +1,41 @@
+[% USE Koha %]
+[% INCLUDE 'doc-head-open.inc' %]
+<title>Koha Tutorial Summary</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body id="admin_admin-home" class="admin">
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; Summary</div>
+
+<div id="doc" class="yui-t7">
+    <div id="bd">
+        <div id="yui-main" class="sysprefs">
+            <div class="yui-g"><h1>Tutorial Summary Page</h1></div>
+            <fieldset>
+            <h2>Library</h2>
+            <p> To add another library and for more settings, go to </br>
+            More > Administration > Libraries and Groups </p>
+
+            <h2>Patron Category</h2>
+            <p>To add another patron category and for more settings, go to</br>
+            More > Administration > Patrons and Circulation > Patron Categories</p>
+
+            <h2>Patron</h2>
+            <p>To create another patron, go to Patrons > New Patron. To set the </br>
+            permissions of the patron, go to the patron's page and More > Set Permissions</p>
+
+            <h2>Item Type</h2>
+            <p>To create another item type and for more settings, go to</br>
+            More > Administration > Item types </p>
+
+            <h2>Circulation Rule</h2>
+            <p>To create another circulation rule, go to </br>
+            More > Administration > Circulation and Fine Rules</p<
+            </fieldset> 
+
+        </div>
+    </div>
+</div>
+[% INCLUDE 'intranet-bottom.inc' %]
