@@ -17,20 +17,15 @@ use Koha::Libraries;
 use Koha::LibraryCategories;
 
 
-#use POSIX;
-#use C4::Templates;
-#use C4::Languages qw(getAllLanguages getTranslatedLanguages);
-#use C4::Installer;
-#use Koha;
-
 #Setting variables
 my $input    = new CGI;
 my $query    = new CGI;
 my $step     = $query->param('step');
 
+#Getting the appropriate template to display to the user-->
 my ( $template, $loggedinuser, $cookie) = get_template_and_user(
      {
-        template_name => "/onboarding/onboardingstep" . ( $step ? $step : 1 ) . ".tt",
+        template_name => "/onboarding/onboardingstep" . ( $step ? $step : 0 ) . ".tt",
         query         => $query,
         type          => "intranet",
         authnotrequired => 0,
@@ -57,24 +52,35 @@ my $dbh = DBI->connect(
 );
 
 
+#Store the value of the input name='op' from the template in the variable $op
+my $op = $query->param('op');
+$template->param('op'=>$op);
+if ( $op && $op eq 'finish' ) { #If the value of $op is equal to 'finish' then redirect to /cgi-bin/koha/mainpage.pl
+    print $query->redirect("/cgi-bin/koha/mainpage.pl");
+    exit;
+}
 
-      my $op = $query->param('op');
-      $template->param('op'=>$op);
-      warn $op;
-      if ( $op && $op eq 'finish' ) {
-         print $query->redirect("/cgi-bin/koha/mainpage.pl");
-         exit;
-      }
+my $start = $query->param('start');
+$template->param('start'=>$start);
 
+if ( $start && $start eq 'Start setting up my Koha' ){
+    my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
+    $template->param(libraries   => $libraries,
+              group_types => [
+                {   categorytype => 'searchdomain',
+                    categories   => [ Koha::LibraryCategories->search( { categorytype => 'searchdomain' } ) ],
+                },
+                {   categorytype => 'properties',
+                         categories   => [ Koha::LibraryCategories->search( { categorytype => 'properties' } ) ],
+                },
+              ]
+    );
 
+#Check if the input name=step is equal to 1 i.e. if the user has clicked the 'submit' button on the 'Create a library' screen 1 of the onboarding tool
+}elsif ( $step && $step == 1 ) {
 
-#Performing each step of the onboarding tool
-if ( $step && $step == 1 ) {
-#This is the Initial step of the onboarding tool to create a library 
-
-
-    my $createlibrary = $query->param('createlibrary');
-    $template->param('createlibrary'=>$createlibrary);
+    my $createlibrary = $query->param('createlibrary'); #Store the inputted library branch code and name in $createlibrary
+    $template->param('createlibrary'=>$createlibrary); # Hand the $createlibrary values back to the template
 
 #store inputted parameters in variables
     my $branchcode       = $input->param('branchcode');
@@ -83,62 +89,27 @@ if ( $step && $step == 1 ) {
     my @messages;
     my $library;
 
-#Find branchcode if it exists
-    if ( $op eq 'add_form' ) {
-        if ($branchcode) {
-            $library = Koha::Libraries->find($branchcode);
-         }
+    if ( $op eq 'add_validate' ) {# Check if the form that the user has submitted is form name='add_validate'
 
-        $template->param(
-            library    => $library,
-            categories => [ Koha::LibraryCategories->search( {}, { order_by => [ 'categorytype', 'categoryname' ] } ) ],
-            $library ? ( selected_categorycodes => [ map { $_->categorycode } $library->get_categories ] ) : (),
-        );
-    } elsif ( $op eq 'add_validate' ) {
-        my @fields = qw(
-            branchname
-        );
+           my @fields = qw(
+                branchname
+            ); #Take the text 'branchname' and store it in the @fields array
 
-        my $is_a_modif = $input->param('is_a_modif');
-
-        my @categories;
-        for my $category ( Koha::LibraryCategories->search ) {
-            push @categories, $category
-                if $input->param( "selected_categorycode_" . $category->categorycode );
-         }
-        if ($is_a_modif) {
-            my $library = Koha::Libraries->find($branchcode);
-            for my $field (@fields) {
-                 $library->$field( scalar $input->param($field) );
-            }
-            $library->update_categories( \@categories );
-
-            eval { $library->store; };
-
-            if ($@) {
-                push @messages, { type => 'alert', code => 'error_on_update' };
-            } else {
-                push @messages, { type => 'message', code => 'success_on_update' };
-            }
-        } else {
-            $branchcode =~ s|\s||g;
+            $branchcode =~ s|\s||g; # Use a regular expression to check the value of th inputtedd branchcode 
             my $library = Koha::Library->new(
-                 {   branchcode => $branchcode,
+                {   branchcode => $branchcode, 
                     ( map { $_ => scalar $input->param($_) || undef } @fields )
                 }
-            );
-            eval { $library->store; };
-            $library->add_to_categories( \@categories );
+            ); #Create a new library object and store the branchcode and @fields array values in this new library object
+            eval { $library->store; }; #Use the eval{} function to store the library object
+
             if ($@) {
                 push @messages, { type => 'alert', code => 'error_on_insert' };
             } else {
                 push @messages, { type => 'message', code => 'success_on_insert' };
-            }
+            } # If there are values in the $@ then push the values type => 'alert', code => 'error_on_insert' into the @messages array else push the values type => 'message', code => 'success_on_insert' to that array
         }
-            $op = 'list';
-    }
 
-        
 }elsif ( $step && $step == 2 ){
 
     my $createpatroncategory = $query->param('createpatroncategory');

@@ -1,7 +1,5 @@
 <!--Includes for creating library--> 
 [% INCLUDE 'doc-head-open.inc' %]
-
-[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 
 <head>
@@ -31,25 +29,34 @@
                                 }
                        });
                  [% END %]..
-         });
-    //]]>
+     });
+//]]>
 </script>
 </head>
 
+<!--Header for the koha onboarding tool-->
 <div>
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
     <h2 align="center"> We're just going to set up a few things......</h2>
 </div>
- 
-<!--Create a library screen 2-->
-[% IF (createlibrary) %]
+ [% IF libraries.count > 1 %]
+ <br>
+    <h3 align="left">You do not need to create a library as you have already installed the sample library data previously</h3>
+    <form name="skiplibrary" method="post" action="onboarding.pl">
+        <input type="hidden" name="step" value="2"/>
+        <div>
+            <input type="submit" value="Continue to creating a patron category"/>
+        </div>
+    </form>
+
+    <!--Create a library screen 2-->
+[% ELSIF (createlibrary) %]
         <!--New Library created-->
         <form name="createlibrary" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="2"/>
             <h1 align="left"> New Library</h1>
-
-            <div>   
+            <div>
                  <p> Success: Library created!</p>
                  <p> To add another library and for more settings, <br>
                 go to Tools->Administration->Libraries and Groups
@@ -57,15 +64,15 @@
             Next up:
             <input type="submit" value="Add a patron category"/>
         </form>
-        
+
         <!--Implement if statement to determine if library was succesfully created here....-
         <div>
              <p> Library was not successfully created</p>
         </div>
         -->
-[% ELSE %]    
+[% ELSE %]
+<!--Create a library screen 1-->
 
-       <h1 align="left"> Create a New Library</h2>
         <form name="LibraryCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="1"/>
@@ -87,7 +94,9 @@
              <br>
              <input type="submit" class="action" value="Submit"/>
      </form>
-[% END %]        
+[% END %]  
+    
+
 
 
 
