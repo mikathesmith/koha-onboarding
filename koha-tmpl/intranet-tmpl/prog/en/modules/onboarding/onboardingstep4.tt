@@ -32,17 +32,15 @@
                  go to More->Administration->Item types 
             </div>
                  Next up:
-                 <input type="submit" value="Add an circulation rule"/>
-                 <br>
-                 Or:
-                 <input type="submit" value="Return to Home"/>
+                 <input type="submit" value="Add a circulation rule"/>
         </form>
+          <!--Implement a if statement to check if the item type was successfully created or not
             <div>
                   <p> Oh no! Patron was not created</p>
-            </div>
+            </div>-->
 [% ELSE %]    
 <!--Create a item type screen 1-->
-       <h1 align="left"> New Item type </h2>
+       <h1 align="left"> Create a new Item type </h2>
         <form name="ItemTypeCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="4"/>
@@ -60,10 +58,8 @@
                             <span class="required">Required</span>
                         </li>
                     </ol>
-            </fieldset>
-            <fieldset>
+            </fieldset><br>
                 <input type="submit" class="action" value="Submit"/>
-            </fieldset>
      </form>
 [% END %]        
 

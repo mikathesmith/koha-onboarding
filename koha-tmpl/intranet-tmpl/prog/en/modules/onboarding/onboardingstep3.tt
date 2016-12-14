@@ -33,12 +33,13 @@
                  Next up:
                  <input type="submit" value="Add an item type"/>
         </form>
-                 <div>
+       <!--Implement a if statement to check if the patron was successfully created
+                <div>
                     <p> Oh no! Patron was not created</p>
-                </div>
+                </div>-->
 [% ELSE %]    
 <!--Create a patron screen 1-->
-       <h1 align="left"> New Patron </h2>
+       <h1 align="left"> Create a new Patron </h2>
         <form name="PatronCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="3"/>
@@ -65,24 +66,33 @@
                             <span class="required">Required</span>
                         </li>
                         <li>
-                         <div class="dropdown">
-                           <button onclick="myFunction()" class="dropbtn">Library: </button>
-                             <div id="myDropdown" class="dropdown-content">
-                                <a href="#">Centreville</a>
-                                <a href="#">Centre City</a>
-                                <a href="#">Centre of the Earth</a>
-                              </div>
-                            </div>
+                       <!--require a foreach loop to get all the values for the library that the user has either imported (in web installer) or created in the first step of this onboarding tool-->
+                            <label for="library"> Library: </label>
+                            <select id="library" name="library" required="required">
+                                <option value="centerville"> Centerville</option>
+                                <option value="fairfield"> Fairfield</option>
+                                <option value="fairview"> Fairview</option>
+                                <option value="franklin"> Franklin</option>
+                                <option value="institut"> Institut Protestant de Théologie</option>
+                                <option value="liberty"> Liberty</option>
+                                <option value="midway"> Midway</option>
+                                <option value="pleasantvalley"> Pleasant Valley</option>
+                                <option value="riverside"> Riverside</option>
+                                <option value="springfield"> Springfield</option>
+                            </select>
+                            <span class="required"> Required</span>
                         </li>
                         <li>
-                         <div class="dropdown">
-                           <button onclick="myFunction()" class="dropbtn">Category: </button>
-                             <div id="myDropdown" class="dropdown-content">
-                                <a href="#">Adult</a>
-                                <a href="#">Infant</a>
-                                <a href="#">Pet Horse</a>
-                              </div>
-                            </div>
+                            <label for="patroncategory"> Patron Category</label>
+                            <select id="patroncategory" name="patroncategory" required="required">
+                                <option value="A"> Adult</option>
+                                <option value="C"> Child</option>
+                                <option value="S"> Staff</option>
+                                <option value="I"> Organization</option>
+                                <option value="P"> Professional</option>
+                                <option value="X">Statistical</option>
+                            </select>
+                            <span class="required">Required</span>
                         </li> 
                     </ol>
                      <ol>
@@ -103,10 +113,8 @@
                             <span class="required">Required</span>
                         </li>
                     </ol>
-             </fieldset>
-            <fieldset>
+             </fieldset><br>
                 <input type="submit" class="action" value="Submit"/>
-            </fieldset>
      </form>
 [% END %]        
 

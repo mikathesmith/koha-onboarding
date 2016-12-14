@@ -38,7 +38,7 @@
                  More->Administration->Circulation and Fine Rules 
             </div>
                  Next up:
-                 <input type="submit" name="op" value="finish"/>
+                 <input type="submit" name="op" value="Finish"/>
         </form>
             <div>
                   <p> Oh no! Circulation Rule was not created</p>
@@ -47,7 +47,7 @@
 
 [% ELSE %]    
 <!--Create a circulation rule screen 1-->
-       <h1 align="left"> New Circulation rule </h2>
+       <h1 align="left"> Create a new Circulation rule </h2>
         <form name="CirculationRuleCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="5"/>
@@ -56,7 +56,7 @@
                     <ol>
                         <li>
                              <label for="patron_category" class="required">Patron Category: </label>
-                             <select name="patron_category" id="patron_category">
+                             <select name="patron_category" id="patron_category" required="required">
                                  [% UNLESS category %]
                                      <option value="" selected="selected">Select a patron category type</option>
                                  [% ELSE %]
@@ -176,7 +176,7 @@
 
                         <li>
                             <label for="units">Units: </label>
-                            <select name="units" id="units">
+                            <select name="units" id="units" required="required">
                                    [% SET units = 'days' %]
 
                                    [% IF category %] <!--Check  if category is the correct value name in the context of units of days that a loan period is for in the item borrowing script-->
@@ -208,7 +208,7 @@
 
                          <li>
                             <label for="onshelfholds">On shelf holds allowed: </label>
-                            <select name="onshelfholds" id="onshelfholds">
+                            <select name="onshelfholds" id="onshelfholds" required="required">
                                    [% SET onshelfholdsallowed = 'yes' %]
 
                                    [% IF category %]
@@ -232,10 +232,8 @@
                             </select>
                         </li>
                     </ol>
-            </fieldset>
-            <fieldset>
-                <input type="submit" class="action" value="Submit"/>
-            </fieldset>
+            </fieldset><br>
+                <input type="submit" class="action" value="Submit"/> 
      </form>
 [% END %]        
 

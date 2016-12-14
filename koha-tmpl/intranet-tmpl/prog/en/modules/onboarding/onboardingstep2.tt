@@ -31,10 +31,9 @@
 
 <!--Create a patron category screen 2-->
 [% IF (createpatroncategory) %]
-                
      <form name="createpatroncategory" method="post" action="onboarding.pl">
              <input type="hidden" name="step" value="3"/>
-             <h1 align="left"> New patron category</h1>
+             <h1 align="left">  New patron category</h1>
              <div>
                  <p> Success: Patron category created!</p>
                  <p> To add another patron category and for more settings<br>
@@ -45,8 +44,7 @@
      </form>
 
 [% ELSE %]
-    <h1 align="left"> New Patron Category</h2>
-    
+    <h1 align="left"> Create a new Patron Category</h2>
     <form id="category_form" method="post" action="onboarding.pl">
         <fieldset class="rows">        
             <input type="hidden" name="step" value="2"/>
@@ -168,7 +166,7 @@
                             </ol>
                      </fieldset>
                      <br>
-                    <input type="submit" class="action" value="Create Patron Category" />
+                    <input type="submit" class="action" value="Submit" />
     </form>
 [% END %]
             

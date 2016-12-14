@@ -39,7 +39,7 @@
 <div>
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
-    <h2> We're just going to set up a few things</h2>
+    <h2 align="center"> We're just going to set up a few things......</h2>
 </div>
  
 <!--Create a library screen 2-->
@@ -65,7 +65,7 @@
         -->
 [% ELSE %]    
 
-       <h1 align="left"> New Library</h2>
+       <h1 align="left"> Create a New Library</h2>
         <form name="LibraryCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="1"/>
@@ -85,7 +85,7 @@
                  </ol>
              </fieldset>
              <br>
-             <input type="submit" class="action" value="Next &gt;&gt;"/>
+             <input type="submit" class="action" value="Submit"/>
      </form>
 [% END %]        
 
