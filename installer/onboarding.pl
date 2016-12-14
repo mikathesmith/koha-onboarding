@@ -11,11 +11,14 @@ use C4::Koha;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
+use C4::Form::MessagingPreferences; 
 use Koha::Patrons;
 use Koha::Items;
 use Koha::Libraries;
 use Koha::LibraryCategories;
-
+use Koha::Database;
+use Koha::DateUtils;
+use Koha::Patron::Categories;
 
 #Setting variables
 my $input    = new CGI;
@@ -112,9 +115,79 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 }elsif ( $step && $step == 2 ){
 
-    my $createpatroncategory = $query->param('createpatroncategory');
-    $template->param('createpatroncategory'=>$createpatroncategory);
+#my $createpatroncategory = $query->param('createpatroncategory');
+#  $template->param('createpatroncategory'=>$createpatroncategory);
 
+    my $input         = new CGI;
+    my $searchfield   = $input->param('description') // q||;
+    my $categorycode  = $input->param('categorycode');
+    my $op            = $input->param('op') // 'list';
+    my @messages;
+
+    my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
+    {
+        template_name   => "/onboarding/onboardingstep2.tt",
+        query           => $input,
+        type            => "intranet",
+        authnotrequired => 0,
+        flagsrequired   => { parameters => 'parameters_remaining_permissions' },
+        debug           => 1,
+    }
+    );
+
+    if ( $op eq 'add_form' ) {
+        my $category;
+        if ($categorycode) {
+            $category          = Koha::Patron::Categories->find($categorycode);
+        }
+
+        $template->param(
+            category => $category,
+        );
+
+        if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
+            C4::Form::MessagingPreferences::set_form_values(
+                { categorycode => $categorycode }, $template );
+        }
+    }
+    elsif ( $op eq 'add_validate' ) {
+        my $categorycode = $input->param('categorycode');
+        my $description = $input->param('description');
+        my $overduenoticerequired = $input->param('overduenoticerequired');
+        my $category_type = $input->param('category_type');
+        my $default_privacy = $input->param('default_privacy');
+        my $enrolmentperiod = $input->param('enrolmentperiod');
+        my $enrolmentperioddate = $input->param('enrolmentperioddate') || undef;
+
+        if ( $enrolmentperioddate) {
+            $enrolmentperioddate = output_pref(
+                    {
+                        dt         => dt_from_string($enrolmentperioddate),
+                        dateformat => 'iso',
+                        dateonly   => 1,
+                    }
+            );
+        }
+
+        my $category = Koha::Patron::Category->new({
+                categorycode=> $categorycode,
+                description => $description,
+                overduenoticerequired => $overduenoticerequired,
+                category_type=> $category_type,
+                default_privacy => $default_privacy,
+                enrolmentperiod => $enrolmentperiod,
+                enrolmentperioddate => $enrolmentperioddate,
+        });
+        eval {
+            $category->store;
+        };
+
+        if($@){
+            push @messages, {type=> 'error', code => 'error_on_insert'};
+        }else{
+            push @messages, {type=> 'message', code => 'success_on_insert'};
+        }
+    }
 }elsif ( $step && $step == 3 ){
 
     my $createpatron = $query->param('createpatron');
@@ -140,12 +213,4 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 
 output_html_with_http_headers $input, $cookie, $template->output;
-
-
-
-
-
-
-
-
 
