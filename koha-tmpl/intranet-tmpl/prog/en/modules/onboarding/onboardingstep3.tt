@@ -17,7 +17,6 @@
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
- 
 <!--Create a patron screen 2-->
 [% IF (createpatron) %]
         <!--New patron created-->
@@ -31,7 +30,7 @@
                 More > Set Permissions in a user page to gain superlibrarian permissions.
                 </div>
                  Next up:
-                 <input type="submit" value="Add an item type"/>
+                 <input type="submit" name="start" value="Add an item type"/>
         </form>
        <!--Implement a if statement to check if the patron was successfully created
                 <div>

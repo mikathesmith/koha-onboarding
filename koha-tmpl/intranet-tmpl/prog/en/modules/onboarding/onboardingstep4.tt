@@ -17,9 +17,20 @@
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
- 
+
+[% IF itemtypes.count > 0 %]
+    <br>
+    <h3 align="left">You do not need to create a item type as you have already installed the sample item type data previously</h3>
+     <form name="skipitemtype" method="post" action="onboarding.pl">
+          <input type="hidden" name="step" value="5"/>
+          <div>
+            <input type="submit" name="start" value="Add a patron"/>
+          </div>
+      </form>
+      
+
 <!--Create a item type screen 2-->
-[% IF (createitemtype) %]
+[% ELSIF (createitemtype) %]
         <!--New item type created-->
         <form name="createitemtype" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="5"/>

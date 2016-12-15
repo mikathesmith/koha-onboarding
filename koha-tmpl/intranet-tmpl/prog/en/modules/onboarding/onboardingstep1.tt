@@ -61,7 +61,7 @@
                 go to Tools->Administration->Libraries and Groups
             </div>
             Next up:
-            <input type="submit" value="Add a patron category"/>
+            <input type="submit" name="start" value="Add a patron category"/>
         </form>
 
         <!--Implement if statement to determine if library was succesfully created here....-

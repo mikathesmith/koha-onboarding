@@ -19,6 +19,8 @@ use Koha::LibraryCategories;
 use Koha::Database;
 use Koha::DateUtils;
 use Koha::Patron::Categories;
+use Koha::ItemTypes;
+
 
 #Setting variables
 my $input    = new CGI;
@@ -90,6 +92,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         categories => $categories,
     ); #Hand the variable categories back to the template
 
+}elsif ( $start && $start eq 'Add an item type' ){
+     my $itemtypes = Koha::ItemTypes->search();
+     warn $itemtypes;
+     $template->param(
+             itemtypes => $itemtypes,
+    );
 
 #Check if the $step variable equals 1 i.e. the user has clicked to create a library in the create library screen 1 
 }elsif ( $step && $step == 1 ) {
@@ -210,16 +218,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $createitemtype = $query->param('createitemtype');
     $template->param('createitemtype'=>$createitemtype);
 
+
 }elsif ( $step && $step == 5){
 
     my $createcirculationrule = $query->param('createcirculationrule');
     $template->param('createcirculationrule'=>$createcirculationrule);
-
-
 }
-
-
-
 
 
 
