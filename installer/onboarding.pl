@@ -41,6 +41,9 @@ use Koha::Token;
 use Email::Valid;
 use Module::Load;
 
+use Koha::ItemTypes;
+use Koha::Localizations;
+
 #Setting variables
 my $input    = new CGI;
 my $query    = new CGI;
@@ -301,21 +304,51 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         eval {
             $member->store;
         };
-         
         if($@){
             push @messages, {type=> 'error', code => 'error_on_insert'};
         }else{
             push @messages, {type=> 'message', code => 'success_on_insert'};
         }
- 
+
     }
 
-
+#Create item type
 }elsif ( $step && $step == 4){
+    my $input = new CGI;
+    my $itemtype_code = $input->param('itemtype');
+    my $op = $input->param('op') // 'list';
+    my @messages;
 
-    my $createitemtype = $query->param('createitemtype');
-    $template->param('createitemtype'=>$createitemtype);
+    my( $template, $borrowernumber, $cookie) = get_template_and_user(
+            {   template_name   => "/onboarding/onboardingstep4.tt",
+                query           => $input,
+                type            => "intranet",
+                authnotrequired => 0,
+                flagsrequired   => { parameters => 'parameters_remaining_permissions'},
+                debug           => 1,
+            }
+    );
 
+    if($op eq 'add_form'){
+        my $itemtype = Koha::ItemTypes->find($itemtype_code);
+        template->param(itemtype=>$itemtype,);
+    }elsif($op eq 'add_validate'){
+        my $itemtype = Koha::ItemTypes->find($itemtype_code);
+        my $description = $input->param('description');
+
+        my $itemtype= Koha::ItemType->new(
+            { itemtype    => $itemtype_code,
+              description => $description,
+            }
+        );
+        eval{ $itemtype->store; };
+
+        if($@){
+            push @messages, {type=> 'error', code => 'error_on_insert'};
+        }else{
+            push @messages, {type=> 'message', code => 'success_on_insert'};
+        }
+    }
 
 }elsif ( $step && $step == 5){
 

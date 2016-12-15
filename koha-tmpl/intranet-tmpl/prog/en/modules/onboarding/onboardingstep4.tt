@@ -30,11 +30,10 @@
       
 
 <!--Create a item type screen 2-->
-[% ELSIF (createitemtype) %]
+[% ELSIF op == "add_validate" %]
         <!--New item type created-->
         <form name="createitemtype" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="5"/>
-            <input type="hidden" name="step" value="1"/>
             <h1 align="left"> New Item type </h1>
 
             <div>   
@@ -52,20 +51,19 @@
 [% ELSE %]    
 <!--Create a item type screen 1-->
        <h1 align="left"> Create a new Item type </h2>
-        <form name="ItemTypeCreation" method="post" action="onboarding.pl">
+        <form name="createitemtype" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="4"/>
                  <input type="hidden" name="op" value="add_validate" />
-                 <input type="hidden" name="createitemtype" value="createitemtype"/>
                     <ol>
                         <li>
                             <label for="itemtype" class="required">Item type: </label>
-                            <input type="text" name="surname" id="surname" size="10" maxlength="10" value="" class="required" required="required" />
+                            <input type="text" name="itemtype" id="itemtype" size="10" maxlength="10"  class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="description" class="required">Description: </label>
-                            <input type="text" name="firstname" id="firstname" size="80" value="" class="required" required="required" style="width:200px;">
+                            <input type="text" name="description" id="description" size="80" value="[% itemtype.description |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>
