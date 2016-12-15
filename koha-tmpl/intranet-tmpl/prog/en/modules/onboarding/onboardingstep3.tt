@@ -1,16 +1,23 @@
-<!--Includes for creating patron--> 
+<!--Includes for creating patron-->
+[% USE Koha %]
+[% USE KohaDates %]
+[% USE Price %]
+<!--[% USE Branches %]-->
 [% INCLUDE 'doc-head-open.inc' %]
+[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END     %]
 
-[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
+
 [% INCLUDE 'installer-doc-head-close.inc' %]
+[% INCLUDE 'calendar.inc' %]
+[% INCLUDE 'datatables.inc' %]
+
 
 <head>
 <title>Create Patron</title>
 
 <!--jQuery scripts for creating patron-->
-
-
-
+<!--<script type="text/javascript" src="[% interface %]/[% theme %]/js/members.js"></script>
+-->
 </head>
 
 <div>
@@ -19,9 +26,9 @@
 </div>
  
 <!--Create a patron screen 2-->
-[% IF (createpatron) %]
+[% IF op == 'add_validate' %]
         <!--New patron created-->
-        <form name="createpatron" method="post" action="onboarding.pl">
+        <form name="patrondone" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="4"/>
             <h1 align="left"> New Patron </h1>
 
@@ -40,57 +47,49 @@
 [% ELSE %]    
 <!--Create a patron screen 1-->
        <h1 align="left"> Create a new Patron </h2>
-        <form name="PatronCreation" method="post" action="onboarding.pl">
+        <form name="createpatron" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="3"/>
                  <input type="hidden" name="op" value="add_validate" />
-                 <input type="hidden" name="createpatron" value="createpatron"/>
                     <ol>
                     <h3>Patron Identity</h3> 
                         <li>
                             <label for="surname" class="required">Surname: </label>
-                            <input type="text" name="surname" id="surname" size="10" maxlength="10" value="[% library.branchcode |html %]" class="required" required="required" />
+                            <input style="text-transform:uppercase;" type="text" id="surname" name="surname" size="0"  value="[% surname %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="firstname" class="required">First Name: </label>
-                            <input type="text" name="firstname" id="firstname" size="80" value="[% library.branchname |html %]" class="    required" required="required" style="width:200px;">
+                            <input style= "text-transform:uppercase;" type="text" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>
+                    
+                    <legend id="library_management_lgd">Library Management</legend>
                     <ol>
-                    <h3>Library Management</h3>
                         <li>
-                            <label for="cardnum" class="required">Card Number: </label>
-                            <input type="text" name="cardnum" id="cardnum" size="10" maxlength="20" value="/" class="required" required="required">
+                            <label for="cardnumber" class="required">Card Number: </label>
+                            <input type="text" id="cardnumber" name="cardnumber" size="10" maxlength="20" value="[% cardnumber | html %]" class="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
                        <!--require a foreach loop to get all the values for the library that the user has either imported (in web installer) or created in the first step of this onboarding tool-->
-                            <label for="library"> Library: </label>
-                            <select id="library" name="library" required="required">
-                                <option value="centerville"> Centerville</option>
-                                <option value="fairfield"> Fairfield</option>
-                                <option value="fairview"> Fairview</option>
-                                <option value="franklin"> Franklin</option>
-                                <option value="institut"> Institut Protestant de Théologie</option>
-                                <option value="liberty"> Liberty</option>
-                                <option value="midway"> Midway</option>
-                                <option value="pleasantvalley"> Pleasant Valley</option>
-                                <option value="riverside"> Riverside</option>
-                                <option value="springfield"> Springfield</option>
-                            </select>
+                            <label for="libraries" class="required"> Library: </label>
+                            <select name="branchcode" size="1" id="libraries">
+
+                             [% FOREACH library IN libraries %]
+                                  <option value="[% library.branchcode %]"> [% library.branchname %]
+                             [% END %]
+                                    
+                                </select>
                             <span class="required"> Required</span>
                         </li>
                         <li>
-                            <label for="patroncategory"> Patron Category</label>
-                            <select id="patroncategory" name="patroncategory" required="required">
-                                <option value="A"> Adult</option>
-                                <option value="C"> Child</option>
-                                <option value="S"> Staff</option>
-                                <option value="I"> Organization</option>
-                                <option value="P"> Professional</option>
-                                <option value="X">Statistical</option>
+                            <label for="categorycode_entry" class="required"> Patron Category</label>
+                            <select id="categorycode_entry" name="categorycode" onchange="update_category_code(this);">
+                           [% FOREACH category IN categories %]
+                                <option value = "[% category.description %]"> [%category.description %] 
+                            [% END %]
                             </select>
                             <span class="required">Required</span>
                         </li> 
@@ -98,18 +97,18 @@
                      <ol>
                     <h3>OPAC/Staff Login</h3> 
                         <li>
-                            <label for="username" class="required">Username: </label>
-                            <input type="text" name="username" id="username" size="10" maxlength="10" value="[% library.branchcode |html %]" class="required" required="required" />
+                            <label for="userid" class="required">Username: </label>
+                            <input type="text" name="userid" id ="userid" size="20" value="[% userid %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="password" class="required">Password: </label>
-                            <input type="password" name="password" id="password" size="80" value="[% library.branchname |html %]" class="    required" required="required" style="width:200px;">
+                            <input type="password" name="password" id="password" size="20" value="[% password %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
-                            <label for="password" class="required">Confirm password: </label>
-                            <input type="password" name="password" id="password" size="80" value="[% library.branchname |html %]" class="    required" required="required" style="width:200px;">
+                            <label for="password2" class="required">Confirm password: </label>
+                            <input type="password" id="password2" name="password2" size="20" value="" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>
