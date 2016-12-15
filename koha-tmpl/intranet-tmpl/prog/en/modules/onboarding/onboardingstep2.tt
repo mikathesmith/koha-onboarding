@@ -4,8 +4,6 @@
 [% USE Price %]
 
 [% INCLUDE 'doc-head-open.inc' %]
-
-[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 [% INCLUDE 'calendar.inc' %]
 [% INCLUDE 'datatables.inc' %]
@@ -13,7 +11,6 @@
 
 <head>
 <title> Add a patron category</title>
-
 <!--JQuery scripts for create patron category-->
 <script type="text/javascript">
      var MSG_CATEGORYCODE_CHARS = _("Category code can only contain the following characters: letters, numbers, - and _.");
@@ -21,16 +18,26 @@
      var MSG_ONE_ENROLLMENTPERIOD = ("Please choose an enrollment period in months OR by date.");
 </script>
 <script type="text/javascript" src="[% themelang %]/js/categories.js"></script>
-
 </head>
 
-<div>
+<div> <!-- Header that appears at the top of every screen in the koha onboarding tool-->
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
 
-<!--Create a patron category screen 2-->
-[% IF op == 'add_validate' %]
+
+[% IF categories.count > 0 %] <!--This if statement checks if the categories variable handed to this template by onboarding.pl has data in it. If the categories variable does have data in it this means that the user has previously imported sample patron category data and so we do not need to show them the create patron category screen 1, instead we can display a screen with ubtton redirecting the user to step 3-->
+<br>
+     <h3 align="left">You do not need to create a patron category as you have already installed the sample patron categories data previously</h3>
+     <form name="skippatroncategory" method="post" action="onboarding.pl">
+          <input type="hidden" name="step" value="3"/>
+          <div>
+            <input type="submit" value="Continue to creating a patron"/>
+          </div>
+     </form>
+
+<!--else if the user has not previously imported sample patron categories check if the user has pressed the button name="add_validate" in the create patron category screen 1, and if they have pressed that button then display the below screen with a button to redirect the user to step 3-->
+[% ELSIF op == 'add_validate' %]
      <form name="createpatroncategory" method="post" action="onboarding.pl">
              <input type="hidden" name="step" value="3"/>
              <h1 align="left">  New patron category</h1>
@@ -40,10 +47,10 @@
                  go to More->Administration->Patrons & Circulation->Patron Categories</p>
              </div>
              Next up:<br>
-             <input type="submit" value="Add a patron">
+             <input type="submit" value="Add a patron"><!-- When the user clicks on this button then redirect them to step 3 of the onboarding tool-->
      </form>
 
-[% ELSE %]
+[% ELSE %] <!--Else display create patron category screen 1 where the user can input values to create their first patron category-->
     <h1 align="left"> Create a new Patron Category</h2>
     <form id="category_form" method="post" action="onboarding.pl">
         <fieldset class="rows">
@@ -154,15 +161,6 @@
             </br>
                     <fieldset>
                     <legend>Choose one</legend>
-<!--
-                        [% IF category.enrolmentperiod %]
-                            [% category.enrolmentperiod %] months
-                        [% ELSE %] 
-                            until [% category.enrolmentperioddate | $KohaDates %]
-                        [% END %]-->
-
-
-
                             <ol>
                                 <li>
                                     <label for="enrolmentperiod" style="width:6em;">In months: </label>
@@ -178,28 +176,6 @@
                     <input type="submit" class="action" value="Submit" />
     </form>
 [% END %]
-            
-                    
-        <!--Onboarding tool step 2-Create a patron category screen 1
-         <div id="doc3" class="yui-t2">
-            <div id="bd">
-                <div id="yui-main">
-                <div class="yui-b">
-         [% FOR m IN messages %]
-            <div class="dialog [% m.type %]">
-                [% SWITCH m.code %]
-                    [% CASE 'error_on_insert' %]
-                        An error occurred when inserting this patron category. The patron category might already exist.
-                    [% CASE 'success_on_insert' %]
-                         Patron category inserted successfully.
-                    [% CASE 'already_exists' %]
-                         This patron category already exists.
-                    [% CASE %]
-                        [% m.code %]
-                    [% END %]
-            </div>
-        [% END %]
-</body>-->
 
 
 

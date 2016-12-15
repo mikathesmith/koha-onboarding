@@ -75,18 +75,19 @@ my $dbh = DBI->connect(
 );
 
 
-#Store the value of the input name='op' from the template in the variable $op
+#Store the value of the template input name='op' in the variable $op so we can check if the user has pressed the button with the name="op" and value="finish" meaning the user has finished the onboarding tool.
 my $op = $query->param('op');
 $template->param('op'=>$op);
-if ( $op && $op eq 'finish' ) { #If the value of $op is equal to 'finish' then redirect to /cgi-bin/koha/mainpage.pl
+if ( $op && $op eq 'finish' ) { #If the value of $op equals 'finish' then redirect user to /cgi-bin/koha/mainpage.pl
     print $query->redirect("/cgi-bin/koha/mainpage.pl");
     exit;
 }
 
-my $start = $query->param('start');
-$template->param('start'=>$start);
 
-if ( $start && $start eq 'Start setting up my Koha' ){
+#Store the value of the template input name='start' in the variable $start so we can check if the user has pressed this button and starting the onboarding tool process
+my $start = $query->param('start');
+$template->param('start'=>$start); #Hand the start variable back to the template
+if ( $start && $start eq 'Start setting up my Koha' ){ 
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
               group_types => [
@@ -99,42 +100,55 @@ if ( $start && $start eq 'Start setting up my Koha' ){
               ]
     );
 
-#Check if the input name=step is equal to 1 i.e. if the user has clicked the 'submit' button on the 'Create a library' screen 1 of the onboarding tool
+
+#Select any library records from the database and hand them back to the template in the libraries variable. 
+}elsif (  $start && $start eq 'Add a patron category' ){
+
+#Select all the patron category records in the categories database table and store them in the newly declared variable $categories
+    my $categories = Koha::Patron::Categories->search(); 
+    $template->param(
+        categories => $categories,
+    ); #Hand the variable categories back to the template
+
+
+#Check if the $step variable equals 1 i.e. the user has clicked to create a library in the create library screen 1 
 }elsif ( $step && $step == 1 ) {
 
     my $createlibrary = $query->param('createlibrary'); #Store the inputted library branch code and name in $createlibrary
-    $template->param('createlibrary'=>$createlibrary); # Hand the $createlibrary values back to the template
+    $template->param('createlibrary'=>$createlibrary); # Hand the library values back to the template in the createlibrary variable
 
-#store inputted parameters in variables
+    #store inputted parameters in variables
     my $branchcode       = $input->param('branchcode');
     my $categorycode     = $input->param('categorycode');
     my $op               = $input->param('op') || 'list';
     my @messages;
     my $library;
 
-    if ( $op eq 'add_validate' ) {# Check if the form that the user has submitted is form name='add_validate'
+    #Take the text 'branchname' and store it in the @fields array
+    my @fields = qw(
+        branchname
+    ); 
 
-           my @fields = qw(
-                branchname
-            ); #Take the text 'branchname' and store it in the @fields array
+    $branchcode =~ s|\s||g; # Use a regular expression to check the value of the inputted branchcode 
 
-            $branchcode =~ s|\s||g; # Use a regular expression to check the value of th inputtedd branchcode 
-            my $library = Koha::Library->new(
-                {   branchcode => $branchcode, 
-                    ( map { $_ => scalar $input->param($_) || undef } @fields )
-                }
-            ); #Create a new library object and store the branchcode and @fields array values in this new library object
-            eval { $library->store; }; #Use the eval{} function to store the library object
-
-            if ($@) {
-                push @messages, { type => 'alert', code => 'error_on_insert' };
-            } else {
-                push @messages, { type => 'message', code => 'success_on_insert' };
-            } # If there are values in the $@ then push the values type => 'alert', code => 'error_on_insert' into the @messages array else push the values type => 'message', code => 'success_on_insert' to that array
+    #Create a new library object and store the branchcode and @fields array values in this new library object
+    my $library = Koha::Library->new(
+        {   branchcode => $branchcode, 
+            ( map { $_ => scalar $input->param($_) || undef } @fields )
         }
-
+    );
 
 #Create Patron category
+    eval { $library->store; }; #Use the eval{} function to store the library object
+
+    #If there are values in the $@ then push the values type => 'alert', code => 'error_on_insert' into the @messages array el    se push the values type => 'message', code => 'success_on_insert' to that array
+    if ($@) {
+        push @messages, { type => 'alert', code => 'error_on_insert' };
+    } else {
+        push @messages, { type => 'message', code => 'success_on_insert' };
+    }
+
+#Check if the $step vairable equals 2 i.e. the user has clicked to create a patron category in the create patron category screen 1
 }elsif ( $step && $step == 2 ){
 
     #Initialising values
