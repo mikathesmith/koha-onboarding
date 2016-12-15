@@ -6,12 +6,27 @@ use diagnostics;
 
 
 use Modern::Perl;
+
+#External modules
 use CGI qw ( -utf8 );
+use List::MoreUtils qw/uniq/;
+use Digest::MD5 qw(md5_base64);
+use Encode qw( encode );
+
+#Internal modules 
 use C4::Koha;
 use C4::Auth;
 use C4::Context;
 use C4::Output;
+use C4::Members;
+use C4::Members::Attributes;
+use C4::Members::AttributeTypes;
+use C4::Log;
+use C4::Letters;
 use C4::Form::MessagingPreferences; 
+use Koha::AuthorisedValues;
+use Koha::Patron::Debarments;
+use Koha::Cities;
 use Koha::Patrons;
 use Koha::Items;
 use Koha::Libraries;
@@ -20,7 +35,11 @@ use Koha::Database;
 use Koha::DateUtils;
 use Koha::Patron::Categories;
 use Koha::ItemTypes;
-
+use Koha::Patron::HouseboundRole;
+use Koha::Patron::HouseboundRoles;
+use Koha::Token;
+use Email::Valid;
+use Module::Load;
 
 #Setting variables
 my $input    = new CGI;
@@ -126,6 +145,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         }
     );
 
+#Create Patron category
     eval { $library->store; }; #Use the eval{} function to store the library object
 
     #If there are values in the $@ then push the values type => 'alert', code => 'error_on_insert' into the @messages array el    se push the values type => 'message', code => 'success_on_insert' to that array
@@ -138,6 +158,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 #Check if the $step vairable equals 2 i.e. the user has clicked to create a patron category in the create patron category screen 1
 }elsif ( $step && $step == 2 ){
 
+    #Initialising values
     my $input         = new CGI;
     my $searchfield   = $input->param('description') // q||;
     my $categorycode  = $input->param('categorycode');
@@ -154,7 +175,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         debug           => 1,
     }
     );
-
+    #When the user first arrives on the page
     if ( $op eq 'add_form' ) {
         my $category;
         if ($categorycode) {
@@ -170,6 +191,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 { categorycode => $categorycode }, $template );
         }
     }
+    #Once the user submits the page, this code validates the input and adds it
+    #to the database as a new patron category 
     elsif ( $op eq 'add_validate' ) {
         my $categorycode = $input->param('categorycode');
         my $description = $input->param('description');
@@ -179,6 +202,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         my $enrolmentperiod = $input->param('enrolmentperiod');
         my $enrolmentperioddate = $input->param('enrolmentperioddate') || undef;
 
+        #Converts the string into a date format
         if ( $enrolmentperioddate) {
             $enrolmentperioddate = output_pref(
                     {
@@ -188,7 +212,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                     }
             );
         }
-
+        #Adds to the database
         my $category = Koha::Patron::Category->new({
                 categorycode=> $categorycode,
                 description => $description,
@@ -202,16 +226,90 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             $category->store;
         };
 
+        #Error messages 
         if($@){
             push @messages, {type=> 'error', code => 'error_on_insert'};
         }else{
             push @messages, {type=> 'message', code => 'success_on_insert'};
         }
     }
+#Create a patron
 }elsif ( $step && $step == 3 ){
 
-    my $createpatron = $query->param('createpatron');
-    $template->param('createpatron'=>$createpatron);
+    my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
+    $template->param(libraries   => $libraries,
+              group_types => [
+                {   categorytype => 'searchdomain',
+                    categories   => [ Koha::LibraryCategories->search( { categorytype => 'searchdomain' } ) ],
+                },
+                {   categorytype => 'properties',
+                         categories   => [ Koha::LibraryCategories->search( { categorytype => 'properties' } ) ],
+                },
+              ]
+    );
+
+        my $categories;
+        $categories= Koha::Patron::Categories->search();
+        $template->param(
+                categories => $categories,
+        );
+
+
+
+    my $input = new CGI;
+    my $op = $input->param('op');
+    my @messages; 
+
+    my ($template, $loggedinuser, $cookie)
+        = get_template_and_user({
+                template_name => "/onboarding/onboardingstep3.tt",
+                query => $input,
+                type => "intranet",
+                authnotrequired => 0,
+                flagsrequired => {borrowers => 1},
+                debug => 1,
+        });
+
+    if($op eq 'add_form'){
+        my $member;
+        $template->param(
+            member => $member,
+        );
+
+
+    }
+    elsif($op eq 'add_validate'){
+        my $surname => $input->param('surname');
+        my $firstname => $input->param('firstname');
+        my $cardnumber => $input->param('cardnumber');
+        my $libraries => $input->param('libraries');
+        my $categorycode_entry => $input->param('categorycode_entry');
+        my $userid => $input->param('userid');
+        my $password => $input->param('password');
+        my $password2 =>$input->param('password2');
+
+        my $member = Koha::Patron->new({
+                surname => $surname,
+                firstname => $firstname,
+                cardnumber => $cardnumber,
+                libraries => $libraries,
+                categorycode_entry => $categorycode_entry,
+                userid => $userid,
+                password => $password,
+                password2 => $password2,
+        });
+        eval {
+            $member->store;
+        };
+         
+        if($@){
+            push @messages, {type=> 'error', code => 'error_on_insert'};
+        }else{
+            push @messages, {type=> 'message', code => 'success_on_insert'};
+        }
+ 
+    }
+
 
 }elsif ( $step && $step == 4){
 
