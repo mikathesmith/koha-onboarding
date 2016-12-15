@@ -71,7 +71,7 @@
         -->
 [% ELSE %]
 <!--Create a library screen 1-->
-
+        <h2>Create a Library</h2> 
         <form name="LibraryCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="1"/>

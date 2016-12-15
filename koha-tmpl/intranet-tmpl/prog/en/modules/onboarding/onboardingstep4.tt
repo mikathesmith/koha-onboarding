@@ -24,7 +24,7 @@
      <form name="skipitemtype" method="post" action="onboarding.pl">
           <input type="hidden" name="step" value="5"/>
           <div>
-            <input type="submit" name="start" value="Add a patron"/>
+            <input type="submit" name="start" value="Add a circulation rule"/>
           </div>
       </form>
       

@@ -25,7 +25,7 @@
 [% END %]
 
 <!--Create a circulation rule screen 2-->
-[% IF (createcirculationrule) %]
+[% IF op == "add_validate" %]
         <!--New circulation rule created-->
         <form name="finish" method="post" action="onboarding.pl">
               <input type="hidden" name="op" value="finish" />
@@ -48,135 +48,48 @@
 [% ELSE %]    
 <!--Create a circulation rule screen 1-->
        <h1 align="left"> Create a new Circulation rule </h2>
-        <form name="CirculationRuleCreation" method="post" action="onboarding.pl">
+  
+       <form name="createcirculationrule" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="5"/>
                  <input type="hidden" name="op" value="add_validate" />
-                 <input type="hidden" name="createcirculationrule" value="createcirculationrule"/>
                     <ol>
-                        <li>
-                             <label for="patron_category" class="required">Patron Category: </label>
-                             <select name="patron_category" id="patron_category" required="required">
-                                 [% UNLESS category %]
-                                     <option value="" selected="selected">Select a patron category type</option>
-                                 [% ELSE %]
-                                     <option value="">Select a patron category type</option>
-                                 [% END %]
-
-                                 [% IF category and category.category_type == 'A' %]
-                                    <option value="A" selected="selected">Adult</option>
-                                 [% ELSE %]
-                                    <option value="A">Adult</option>
-                                 [% END %]
-
-                                 [% IF category and category.category_type == 'C' %]
-                                    <option value="C" selected="selected">Child</option>
-                                 [% ELSE %]
-                                    <option value="C">Child</option>
-                                 [% END %]
-
-                                 [% IF category and category.category_type == 'S' %]
-                                    <option value="S" selected="selected">Staff</option>
-                                 [% ELSE %]
-                                    <option value="S">Staff</option>
-                                 [% END %]
-
-                                 [% IF category and category.category_type == 'I' %]
-                                    <option value="I" selected="selected">Organization</option>
-                                 [% ELSE %]
-                                    <option value="I">Organization</option>
-                                 [% END %]
-
-                                 [% IF category and category.category_type == 'P' %]
-                                    <option value="P" selected="selected">Professional</option>
-                                 [% ELSE %]
-                                    <option value="P">Professional</option>
-                                 [% END %]
-
-                                 [% IF category and category.category_type == 'X' %]
-                                    <option value="X" selected="selected">Statistical</option>
-                                 [% ELSE %]
-                                    <option value="X">Statistical</option>
-                                 [% END %]
-                            </select>
+                    <li>
+                             <label for="categorycode" class="required">Patron Category: </label>
+                             <select name="categorycode" id="categorycode" required="required" onchange = "update_categorycode(this);">
+                                                   
+                             [% FOREACH category IN categories %]
+                                <option value = "[% category.description %]"> [%category.description %]
+                            [%END%]
+                             </select>
                         <span class="required">Required</span>
                     </li>
 
                     <li>
-                        <label for="item_type"> Item type: </label>
-                        <select id="item_type" name="item_type" required="required">
-                              [% UNLESS item_type %]
-                                 <option value="" selected="selected">Select a item type</option>
-                              [% ELSE %]
-                                 <option value="">Select a category type</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Books' %]
-                                <option value="Books" selected="selected">Books</option>
-                              [% ELSE %]
-                                <option value="Books">Books</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Computer Files' %]
-                                <option value="Computer Files" selected="selected">Computer Files</option>
-                              [% ELSE %]
-                                <option value="Computer Files">Computer Files</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Continuing Resources' %]
-                                <option value="Continuing Resources" selected="selected">Continuing Resources</option>
-                              [% ELSE %]
-                                <option value="Continuing Resources">Continuing Resources</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Maps' %]
-                                <option value="Maps" selected="selected">Maps</option>
-                              [% ELSE %]
-                                <option value="Maps">Maps</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Mixed Materials' %]
-                                <option value="Mixed Materials" selected="selected">Mixed Materials</option>
-                              [% ELSE %]
-                                <option value="Mixed Materials">Mixed Materials</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Music' %]
-                                <option value="Music" selected="selected">Music</option>
-                              [% ELSE %]
-                                <option value="Music">Music</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Reference' %]
-                                <option value="Reference" selected="selected">Reference</option>
-                              [% ELSE %]
-                                <option value="Reference">Reference</option>
-                              [% END %]
-
-                              [% IF item_type and item.item_type == 'Visual Materials' %]
-                                <option value="Visual Materials" selected="selected">Visual Materials</option>
-                              [% ELSE %]
-                                <option value="Visual Materials">Visual Materials</option>
-                              [% END %]
+                        <label for="itemtype"> Item type: </label>
+                        <select id="itemtype" name="itemtype" required="required">
+                            [% FOREACH item IN itemtypes %]
+                                <option value = "[% item.itemtype %]"> [% item.itemtype %]
+                            [%END%]
                             </select>
                             <span class="required"> Required</span>
                         </li>
 
                         <li>
-                            <label for="currentcheckoutsallowed" class="required">Current checkouts allowed: </label>
-                            <input type="text" name="currentcheckoutsallowed" id="currentcheckoutsallowed" size="10" maxlength="10" value="" class="required" required="required" />
+                            <label for="maxissueqty" class="required">Current checkouts allowed: </label>
+                            <input type="text" name="maxissueqty" id="maxissueqty" size="10" maxlength="10" value="" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         
                         <li>
-                             <label for="loanperiod" class="required">Loan Period: </label>
-                             <input type="text" name="loanperiod" id="loanperiod" size="10" maxlength="10" value="" class="required" required="required" />
+                             <label for="issuelength" class="required">Loan Period: </label>
+                             <input type="text" name="issuelength" id="issuelength" size="10" maxlength="10" value="" class="required" required="required" />
                               <span class="required">Required</span>
                         </li>
 
                         <li>
-                            <label for="units">Units: </label>
-                            <select name="units" id="units" required="required">
+                            <label for="lengthunit">Units: </label>
+                            <select name="lengthunit" id="lengthunit" required="required">
                                    [% SET units = 'days' %]
 
                                    [% IF category %] <!--Check  if category is the correct value name in the context of units of days that a loan period is for in the item borrowing script-->
@@ -209,26 +122,9 @@
                          <li>
                             <label for="onshelfholds">On shelf holds allowed: </label>
                             <select name="onshelfholds" id="onshelfholds" required="required">
-                                   [% SET onshelfholdsallowed = 'yes' %]
-
-                                   [% IF category %]
-                                   [% SET onshelfholdsallowed = category.onshelfholdsallowed %]
-                                   [% END %]
-
-                                   [% SWITCH onshelfholdsallowed %]
-                                   [% CASE 'yes' %]
                                      <option value="yes" selected="selected">Yes</option>
                                      <option value="anyunavailable">If any unavailable</option>
-                                     <option value="allunavailable">If all unavailable</option>
-                                   [% CASE 'anyunavailable' %]
-                                     <option value="yes">Yes</option>
-                                     <option value="anyunavailable" selected="selected">If any unavailable</option>
-                                     <option value="allunavailable">If all unavailable</option>
-                                   [% CASE 'allunavailable' %]
-                                     <option value="yes">Yes</option>
-                                     <option value="anyunavailable">If any unavailable</option>
-                                     <option value="allunavailable" selected="selected">If all unavailable</option>
-                                   [% END %]
+                                    <option value="allunavailable">If all unavailable</option>
                             </select>
                         </li>
                     </ol>
