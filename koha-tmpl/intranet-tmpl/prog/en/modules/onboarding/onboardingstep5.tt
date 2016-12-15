@@ -30,7 +30,7 @@
         <form name="finish" method="post" action="onboarding.pl">
               <input type="hidden" name="op" value="finish" />
 
-            <h1 align="left"> New Item type </h1>
+            <h1 align="left"> New Circulation rule </h1>
 
             <div>   
                  <p> Success: New circulation rule created!</p>
@@ -40,9 +40,9 @@
                  Next up:
                  <input type="submit" name="op" value="Finish"/>
         </form>
-            <div>
+           <!-- <div>
                   <p> Oh no! Circulation Rule was not created</p>
-            </div>
+            </div> -->
 
 
 [% ELSE %]    

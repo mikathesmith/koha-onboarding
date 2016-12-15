@@ -38,15 +38,14 @@
 <div>
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
-    <h2 align="center"> We're just going to set up a few things......</h2>
 </div>
- [% IF libraries.count > 1 %]
+ [% IF libraries.count > 0 %]
  <br>
     <h3 align="left">You do not need to create a library as you have already installed the sample library data previously</h3>
     <form name="skiplibrary" method="post" action="onboarding.pl">
         <input type="hidden" name="step" value="2"/>
         <div>
-            <input type="submit" value="Continue to creating a patron category"/>
+            <input type="submit" name="start" value="Add a patron category"/>
         </div>
     </form>
 

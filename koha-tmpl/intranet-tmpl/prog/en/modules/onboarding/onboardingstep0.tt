@@ -1,4 +1,4 @@
-<!-- Includes for creating library-->.
+<!-- Includes for creating library-->
 [% INCLUDE 'doc-head-open.inc' %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 
