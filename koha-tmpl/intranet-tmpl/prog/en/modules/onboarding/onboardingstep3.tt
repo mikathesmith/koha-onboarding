@@ -29,8 +29,8 @@
         <!--New patron created-->
         <form name="patrondone" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="4"/>
+    Your password is [% surname %] 
             <h1 align="left"> New Patron </h1>
-
             <div>   
                  <p> Success: New patron created!</p>
                  <p> To create another patron, go to Patrons > New Patron. <br>
@@ -54,7 +54,8 @@
                     <h3>Patron Identity</h3> 
                         <li>
                             <label for="surname" class="required">Surname: </label>
-                            <input style="text-transform:uppercase;" type="text" id="surname" name="surname" size="0"  value="[% surname %]" class="required" required="required" />
+
+                            <input type="text" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
@@ -74,10 +75,10 @@
                         <li>
                        <!--require a foreach loop to get all the values for the library that the user has either imported (in web installer) or created in the first step of this onboarding tool-->
                             <label for="libraries" class="required"> Library: </label>
-                            <select name="branchcode" size="1" id="libraries">
+                            <select name="libraries" size="1" id="libraries">
 
                              [% FOREACH library IN libraries %]
-                                  <option value="[% library.branchcode %]"> [% library.branchname %]
+                                  <option name="libraries" value="[% library.branchcode %]"> [% library.branchname %]
                              [% END %]
                                     
                                 </select>
@@ -85,10 +86,10 @@
                         </li>
                         <li>
                             <label for="categorycode_entry" class="required"> Patron Category</label>
-                            <select id="categorycode_entry" name="categorycode" onchange="update_category_code(this);">
-                           [% FOREACH category IN categories %]
-                                <option value = "[% category.description %]"> [%category.description %] 
-                            [% END %]
+                            <select id="categorycode_entry" name="categorycode_entry" onchange="update_category_code(this);">
+                           [% FOREACH category IN categories %] 
+                                <option name="categorycode_entry" value = "[% category.categorycode %]"> [%category.categorycode %]</option>
+                           [% END %]
                             </select>
                             <span class="required">Required</span>
                         </li> 
@@ -101,8 +102,8 @@
                             <span class="required">Required</span>
                         </li>
                         <li>
-                            <label for="password" class="required">Password: </label>
-                            <input type="password" name="password" id="password" size="20" value="[% password %]" class="required" required="required">
+                            <label for="passwordlabel" class="required">Password: </label>
+                            <input type="password" name="password" id="password" size="20" value="[% member.password |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
