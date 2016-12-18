@@ -124,7 +124,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 }elsif ( $start && $start eq 'Add an item type' ){
      my $itemtypes = Koha::ItemTypes->search();
-     warn $itemtypes;
      $template->param(
              itemtypes => $itemtypes,
     );
@@ -146,6 +145,16 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my @fields = qw(
         branchname
     ); 
+
+
+#test
+    $template->param('branchcode'=>$branchcode); 
+
+
+
+
+
+
 
     $branchcode =~ s|\s||g; # Use a regular expression to check the value of the inputted branchcode 
 
@@ -205,6 +214,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
     elsif ( $op eq 'add_validate' ) {
+
         my $categorycode = $input->param('categorycode');
         my $description = $input->param('description');
         my $overduenoticerequired = $input->param('overduenoticerequired');
@@ -259,66 +269,74 @@ if ( $start && $start eq 'Start setting up my Koha' ){
               ]
     );
 
-        my $categories;
-        $categories= Koha::Patron::Categories->search();
-        $template->param(
-                categories => $categories,
-        );
+    my $categories;
+    $categories= Koha::Patron::Categories->search();
+    $template->param(
+            categories => $categories,
+    );
 
 
 
     my $input = new CGI;
-    my $op = $input->param('op');
+    my $op = $input->param('op') // 'list';
+
     my @messages; 
 
-    my ($template, $loggedinuser, $cookie)
-        = get_template_and_user({
+    my ($template, $loggedinuser, $cookie)= get_template_and_user({
                 template_name => "/onboarding/onboardingstep3.tt",
                 query => $input,
                 type => "intranet",
                 authnotrequired => 0,
                 flagsrequired => {borrowers => 1},
                 debug => 1,
-        });
+    });
 
     if($op eq 'add_form'){
         my $member;
         $template->param(
             member => $member,
         );
+   }
+
+  elsif($op eq 'add_validate'){
+        
+        my $surname = $input->param('surname');
+        my $firstname = $input->param('firstname');
+        my $cardnumber = $input->param('cardnumber');
+        my $libraries = $input->param('libraries');
+        my $categorycode_entry = $input->param('categorycode_entry');
+        my $userid = $input->param('userid');
+        my $password = $input->param('password');
+        my $password2 = $input->param('password2');
+
+        warn $libraries;
+        $template->param('surname'=>$surname); 
 
 
-    }
-    elsif($op eq 'add_validate'){
-        my $surname => $input->param('surname');
-        my $firstname => $input->param('firstname');
-        my $cardnumber => $input->param('cardnumber');
-        my $libraries => $input->param('libraries');
-        my $categorycode_entry => $input->param('categorycode_entry');
-        my $userid => $input->param('userid');
-        my $password => $input->param('password');
-        my $password2 =>$input->param('password2');
 
         my $member = Koha::Patron->new({
                 surname => $surname,
                 firstname => $firstname,
                 cardnumber => $cardnumber,
-                libraries => $libraries,
-                categorycode_entry => $categorycode_entry,
+                branchcode => $libraries,
+                categorycode => $categorycode_entry,
                 userid => $userid,
                 password => $password,
-                password2 => $password2,
         });
+
         eval {
             $member->store;
         };
+        
         if($@){
             push @messages, {type=> 'error', code => 'error_on_insert'};
         }else{
             push @messages, {type=> 'message', code => 'success_on_insert'};
         }
+ 
+  }
 
-    }
+   
 
 #Create item type
 }elsif ( $step && $step == 4){
