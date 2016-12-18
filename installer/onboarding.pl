@@ -403,6 +403,23 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         my $renewalsallowed = $input->param('renewalsallowed');
         my $renewalperiod = $input->param('renewalperiod');
         my $onshelfholds = $input->param('onshelfholds');
+
+        my $params ={
+            categorycode    => $bor,
+            itemtype        => $itemtype,
+            maxissueqty     => $maxissueqty,
+            renewalsallowed => $renewalsallowed,
+            renewalperiod   => $renewalperiod,
+            lengthunit      => $lengthunit,
+            onshelfholds    => $onshelfholds,
+        };
+        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype});
+        if($issuingrule){
+            $issuingrule->set($params)->store();
+        }else{
+            Koha::IssuingRule->new()->set($params)->store(); 
+            }
+
    
     }
     
