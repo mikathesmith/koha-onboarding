@@ -18,6 +18,8 @@
      var MSG_ONE_ENROLLMENTPERIOD = ("Please choose an enrollment period in months OR by date.");
 </script>
 <script type="text/javascript" src="[% themelang %]/js/categories.js"></script>
+<style type="text/css">#enrolmentmessage.hint { display : none; }</style>
+
 </head>
 
 <div> <!-- Header that appears at the top of every screen in the koha onboarding tool-->
@@ -85,12 +87,6 @@
                     <li>
                         <label for="category_type" class="required">Category type: </label>
                         <select name="category_type" value="category_type" class='required' required='required'>
-                            [% UNLESS category %]
-                                <option value="" selected="selected">Select a category type</option>
-                            [% ELSE %]
-                                <option value="">Select a category type</option>
-                            [% END %]
-
                             [% IF category and category.category_type == 'A' %]
                                 <option value="A" selected="selected">Adult</ option>
                             [% ELSE %]

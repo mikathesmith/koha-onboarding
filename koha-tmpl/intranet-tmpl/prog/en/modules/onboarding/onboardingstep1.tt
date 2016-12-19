@@ -53,10 +53,6 @@
 [% ELSIF (createlibrary) %]
         <!--New Library created-->
         <form name="createlibrary" method="post" action="onboarding.pl">
-
-        
-        
-        Your branchcode is [% branchcode %]
         
             <input type="hidden" name="step" value="2"/>
             <h1 align="left"> New Library</h1>
