@@ -87,7 +87,7 @@
                             <label for="categorycode_entry" class="required"> Patron Category</label>
                             <select id="categorycode_entry" name="categorycode_entry" onchange="update_category_code(this);">
                            [% FOREACH category IN categories %] 
-                                <option name="categorycode_entry" value = "[% category.categorycode %]"> [%category.categorycode %]</option>
+                                <option name="categorycode_entry" value = "[% category.description %]"> [%category.description %]</option>
                            [% END %]
                             </select>
                             <span class="required">Required</span>
@@ -114,15 +114,4 @@
              </fieldset><br>
                 <input type="submit" class="action" value="Submit"/>
      </form>
-[% END %]        
-
-
-
-
-
-
-
-
-
-
-
+[% END %]
