@@ -39,7 +39,7 @@
      </form>
 
 <!--else if the user has not previously imported sample patron categories check if the user has pressed the button name="add_validate" in the create patron category screen 1, and if they have pressed that button then display the below screen with a button to redirect the user to step 3-->
-[% ELSIF (createcat) %]
+[% ELSIF op == "add_validate" %]
     [% IF message != "error_on_insert" %]
      <form name="createcat" method="post" action="onboarding.pl">
           Message is [%message%] 
@@ -71,7 +71,7 @@
     <form id="category_form" method="post" action="onboarding.pl">
         <fieldset class="rows">
             <input type="hidden" name="step" value="2"/>
-            <input type="hidden" name="createcat" value="createcat" />
+            <input type="hidden" name="op" value="add_validate" />
                 <ol>
                     <li>
                         <label for="categorycode" class="required">Category code: </label>
