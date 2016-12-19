@@ -196,7 +196,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 #   if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
 #           C4::Form::MessagingPreferences::set_form_values(
-#               { categorycode => $categorycode }, $template );
+#               { categorycode => $categorycode }, $template );      }
 #       }
 #   }
     #Once the user submits the page, this code validates the input and adds it
@@ -208,8 +208,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             $category = Koha::Patron::Categories->find($categorycode);
         }
         $template->param(
-                category=>$category,
+                category => $category,
                 );
+
+        if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
+           C4::Form::MessagingPreferences::set_form_values(
+               { categorycode => $categorycode }, $template );      }   
 
         
     }elsif ( $op eq 'add_validate' ) {
@@ -353,14 +357,14 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         my $description = $input->param('description');
 
         #store the input from the form - only 2 fields 
-        my $itemnew= Koha::ItemType->new(
+        my $itemtype= Koha::ItemType->new(
             { itemtype    => $itemtype_code,
               description => $description,
             }
         );
-        eval{ $itemnew->store; };
+        eval{ $itemtype->store; };
         #Error messages
-        if($itemnew){
+        if($itemtype){
             $message = 'success_on_insert';
         }else{
             $message = 'error_on_insert';
