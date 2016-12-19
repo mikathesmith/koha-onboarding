@@ -29,7 +29,6 @@
         <!--New patron created-->
         <form name="patrondone" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="4"/>
-    Your password is [% surname %] 
             <h1 align="left"> New Patron </h1>
             <div>   
                  <p> Success: New patron created!</p>

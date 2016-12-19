@@ -73,7 +73,7 @@
                         </li>
                         <li>
                             <label for="description" class="required">Description: </label>
-                            <input type="text" name="description" id="description" size="80" value="[% itemtype.description |html %]" class="required" required="required">
+                            <input type="text" name="description" id="description" size="42" value="[% itemtype.description |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>

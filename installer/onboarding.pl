@@ -41,17 +41,6 @@ use Koha::Token;
 use Email::Valid;
 use Module::Load;
 
-#Imports for item types step 4
-use Koha::ItemTypes;
-use Koha::Localizations;
-
-#Imports for circulation rule step 5
-use Koha::IssuingRule;
-use Koha::IssuingRules;
-use Koha::Logger;
-use Koha::RefundLostItemFeeRule;
-use Koha::RefundLostItemFeeRules;
-
 #Setting variables
 my $input    = new CGI;
 my $query    = new CGI;
@@ -212,8 +201,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 #   }
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
-#}  elsif ( $op eq 'add_validate' ) {
 
+    elsif ( $op eq 'add_validate' ) {
         my $categorycode = $input->param('categorycode');
         my $description = $input->param('description');
         my $overduenoticerequired = $input->param('overduenoticerequired');
@@ -279,7 +268,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     );
 
 
-
     my $input = new CGI;
     my $op = $input->param('op') // 'list';
 
@@ -302,36 +290,24 @@ if ( $start && $start eq 'Start setting up my Koha' ){
    }
 
   elsif($op eq 'add_validate'){
-        
-        my $surname = $input->param('surname');
-        my $firstname = $input->param('firstname');
-        my $cardnumber = $input->param('cardnumber');
-        my $libraries = $input->param('libraries');
-        my $categorycode_entry = $input->param('categorycode_entry');
-        my $userid = $input->param('userid');
-        my $password = $input->param('password');
-        my $password2 = $input->param('password2');
 
-        warn $libraries;
-        $template->param('surname'=>$surname); 
+       my %newdata;
 
+      
+         $newdata{borrowernumber} = $input->param('borrowernumber');       
+         $newdata{surname}  = $input->param('surname');
+         $newdata{firstname}  = $input->param('firstname');
+         $newdata{cardnumber} = $input->param('cardnumber');
+         $newdata{branchcode} = $input->param('libraries');
+         $newdata{categorycode} = $input->param('categorycode_entry');
+         $newdata{userid} = $input->param('userid');
+         $newdata{password} = $input->param('password');
+         $newdata{password2} = $input->param('password2');
+         $newdata{dateexpiry} = '12/10/2016';
 
+         my $borrowernumber = &AddMember(%newdata);
 
-        my $member = Koha::Patron->new({
-                surname => $surname,
-                firstname => $firstname,
-                cardnumber => $cardnumber,
-                branchcode => $libraries,
-                categorycode => $categorycode_entry,
-                userid => $userid,
-                password => $password,
-        });
-
-        eval {
-            $member->store;
-        };
-        
-        if($@){
+        if(!$borrowernumber){
             push @messages, {type=> 'error', code => 'error_on_insert'};
         }else{
             push @messages, {type=> 'message', code => 'success_on_insert'};
@@ -339,9 +315,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
  
   }
 
-   
 
-#Create item type
 }elsif ( $step && $step == 4){
     my $createitemtype = $input->param('createitemtype');
     $template->param('createitemtype'=> $createitemtype );
@@ -384,6 +358,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
         $template->param('message' => $message); 
     }
+
+
 
 
 }elsif ( $step && $step == 5){
@@ -454,7 +430,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 
 }
-
 
 
 
