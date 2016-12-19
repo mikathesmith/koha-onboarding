@@ -202,7 +202,17 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
 
-    elsif ( $op eq 'add_validate' ) {
+    if($op eq 'add_form'){
+        my $category;
+        if($categorycode){
+            $category = Koha::Patron::Categories->find($categorycode);
+        }
+        $template->param(
+                category=>$category,
+                );
+
+        
+    }elsif ( $op eq 'add_validate' ) {
         my $categorycode = $input->param('categorycode');
         my $description = $input->param('description');
         my $overduenoticerequired = $input->param('overduenoticerequired');
@@ -243,9 +253,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         }
 
         $template->param('message' => $message); 
+    
+        }
 
-
-#   }
 #Create a patron
 }elsif ( $step && $step == 3 ){
 
