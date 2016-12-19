@@ -138,8 +138,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $branchcode       = $input->param('branchcode');
     my $categorycode     = $input->param('categorycode');
     my $op               = $input->param('op') || 'list';
-    my @messages;
+    my $message;
     my $library;
+#my @messages;
 
     #Take the text 'branchname' and store it in the @fields array
     my @fields = qw(
@@ -150,40 +151,39 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 #test
     $template->param('branchcode'=>$branchcode); 
 
-
-
-
-
-
-
     $branchcode =~ s|\s||g; # Use a regular expression to check the value of the inputted branchcode 
 
     #Create a new library object and store the branchcode and @fields array values in this new library object
-    my $library = Koha::Library->new(
+    $library = Koha::Library->new(
         {   branchcode => $branchcode, 
             ( map { $_ => scalar $input->param($_) || undef } @fields )
         }
     );
 
-#Create Patron category
     eval { $library->store; }; #Use the eval{} function to store the library object
 
-    #If there are values in the $@ then push the values type => 'alert', code => 'error_on_insert' into the @messages array el    se push the values type => 'message', code => 'success_on_insert' to that array
-    if ($@) {
-        push @messages, { type => 'alert', code => 'error_on_insert' };
-    } else {
-        push @messages, { type => 'message', code => 'success_on_insert' };
-    }
+    if($library){
+       $message = 'success_on_insert';
+   }else{
+       $message = 'error_on_insert';
+   }
+
+   $template->param('message' => $message); 
+
 
 #Check if the $step vairable equals 2 i.e. the user has clicked to create a patron category in the create patron category screen 1
 }elsif ( $step && $step == 2 ){
+    my $createcat = $query->param('createcat'); #Store the inputted library branch code and name in $createlibrary
+    $template->param('createcat'=>$createcat); # Hand the library values back to the template in the createlibrary variable
+
 
     #Initialising values
     my $input         = new CGI;
     my $searchfield   = $input->param('description') // q||;
     my $categorycode  = $input->param('categorycode');
     my $op            = $input->param('op') // 'list';
-    my @messages;
+    my $message;
+    my $category;
 
     my ( $template, $loggedinuser, $cookie ) = get_template_and_user(
     {
@@ -196,24 +196,23 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     }
     );
     #When the user first arrives on the page
-    if ( $op eq 'add_form' ) {
-        my $category;
-        if ($categorycode) {
-            $category          = Koha::Patron::Categories->find($categorycode);
-        }
+#if ( $op eq 'add_form' ) {
+#    if ($categorycode) {
+#          $category          = Koha::Patron::Categories->find($categorycode);
+#      }
 
-        $template->param(
-            category => $category,
-        );
+#    $template->param(
+#          category => $category,
+#  );
 
-        if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
-            C4::Form::MessagingPreferences::set_form_values(
-                { categorycode => $categorycode }, $template );
-        }
-    }
+#   if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
+#           C4::Form::MessagingPreferences::set_form_values(
+#               { categorycode => $categorycode }, $template );
+#       }
+#   }
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
-    elsif ( $op eq 'add_validate' ) {
+#}  elsif ( $op eq 'add_validate' ) {
 
         my $categorycode = $input->param('categorycode');
         my $description = $input->param('description');
@@ -234,7 +233,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             );
         }
         #Adds to the database
-        my $category = Koha::Patron::Category->new({
+        $category = Koha::Patron::Category->new({
                 categorycode=> $categorycode,
                 description => $description,
                 overduenoticerequired => $overduenoticerequired,
@@ -247,13 +246,17 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             $category->store;
         };
 
-        #Error messages 
-        if($@){
-            push @messages, {type=> 'error', code => 'error_on_insert'};
+        #Error messages
+        if($category){
+            $message = 'success_on_insert';
         }else{
-            push @messages, {type=> 'message', code => 'success_on_insert'};
+            $message = 'error_on_insert';
         }
-    }
+
+        $template->param('message' => $message); 
+
+
+#   }
 #Create a patron
 }elsif ( $step && $step == 3 ){
 
@@ -340,10 +343,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 #Create item type
 }elsif ( $step && $step == 4){
+    my $createitemtype = $input->param('createitemtype');
+    $template->param('createitemtype'=> $createitemtype );
+    
     my $input = new CGI;
     my $itemtype_code = $input->param('itemtype');
     my $op = $input->param('op') // 'list';
-    my @messages;
+    my $message;
 
     my( $template, $borrowernumber, $cookie) = get_template_and_user(
             {   template_name   => "/onboarding/onboardingstep4.tt",
@@ -354,28 +360,31 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 debug           => 1,
             }
     );
-
+   
     if($op eq 'add_form'){
         my $itemtype = Koha::ItemTypes->find($itemtype_code);
-        template->param(itemtype=>$itemtype,);
+        $template->param(itemtype=> $itemtype,);
     }elsif($op eq 'add_validate'){
         my $itemtype = Koha::ItemTypes->find($itemtype_code);
         my $description = $input->param('description');
 
         #store the input from the form - only 2 fields 
-        my $itemtype= Koha::ItemType->new(
+        my $itemnew= Koha::ItemType->new(
             { itemtype    => $itemtype_code,
               description => $description,
             }
         );
-        eval{ $itemtype->store; };
+        eval{ $itemnew->store; };
         #Error messages
-        if($@){
-            push @messages, {type=> 'error', code => 'error_on_insert'};
+        if($itemnew){
+            $message = 'success_on_insert';
         }else{
-            push @messages, {type=> 'message', code => 'success_on_insert'};
+            $message = 'error_on_insert';
         }
+
+        $template->param('message' => $message); 
     }
+
 
 }elsif ( $step && $step == 5){
     #Fetching all the existing categories to display in a drop down box
