@@ -313,9 +313,72 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 
 }elsif ( $step && $step == 5){
+    #Fetching all the existing categories to display in a drop down box
+    my $categories;
+    $categories= Koha::Patron::Categories->search();
+    $template->param(
+        categories => $categories,
+    );
 
-    my $createcirculationrule = $query->param('createcirculationrule');
-    $template->param('createcirculationrule'=>$createcirculationrule);
+    my $itemtypes;
+    $itemtypes= Koha::ItemTypes->search();
+    $template->param(
+        itemtypes => $itemtypes,
+    );
+
+    my $input = CGI->new;
+    my($template, $loggedinuser, $cookie)  =get_template_and_user({
+            template_name => "/onboarding/onboardingstep5.tt",
+            query => $input,
+            type => "intranet",
+            authnotrequired=>0,
+            flagsrequired=> {parameters => 'manage_circ_rules'},
+            debug =>1,
+    });
+    
+    my $type = $input->param('type');
+    my $branch = $input->param('branch');
+    
+    
+    
+    if($op eq 'add_form'){
+
+
+
+    }
+    elsif($op eq 'add_validate'){
+        my $bor = $input->param('categorycode');
+        my $itemtype = $input->param('itemtype');
+        my $maxissueqty = $input->param('maxissueqty');
+        my $issuelength = $input->param('issuelength');
+        #$issuelength = $issuelength eq q{} ? undef : $issuelength;
+        my $lengthunit = $input->param('lengthunit');
+        my $renewalsallowed = $input->param('renewalsallowed');
+        my $renewalperiod = $input->param('renewalperiod');
+        my $onshelfholds = $input->param('onshelfholds');
+
+        my $params ={
+            categorycode    => $bor,
+            itemtype        => $itemtype,
+            maxissueqty     => $maxissueqty,
+            renewalsallowed => $renewalsallowed,
+            renewalperiod   => $renewalperiod,
+            lengthunit      => $lengthunit,
+            onshelfholds    => $onshelfholds,
+        };
+        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype});
+        if($issuingrule){
+            $issuingrule->set($params)->store();
+        }else{
+            Koha::IssuingRule->new()->set($params)->store(); 
+            }
+
+   
+    }
+    
+
+
+
 }
 
 

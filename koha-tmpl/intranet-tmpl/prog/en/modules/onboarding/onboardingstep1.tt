@@ -52,31 +52,39 @@
     <!--Create a library screen 2-->
 [% ELSIF (createlibrary) %]
         <!--New Library created-->
-        <form name="createlibrary" method="post" action="onboarding.pl">
-        
-            <input type="hidden" name="step" value="2"/>
-            <h1 align="left"> New Library</h1>
-            <div>
-                 <p> Success: Library created!</p>
-                 <p> To add another library and for more settings, <br>
-                go to Tools->Administration->Libraries and Groups
-            </div>
-            Next up:
-            <input type="submit" name="start" value="Add a patron category"/>
-        </form>
+       [% IF message == "success_on_insert" %] 
+            <form name="createlibrary" method="post" action="onboarding.pl">
+                <input type="hidden" name="step" value="2"/>
+                <h1 align="left"> New Library</h1>
+                <div>
+                    <p> Success: Library created! Your branchcode is [% branchcode %]
+</p>
+                    <p> To add another library and for more settings, <br>
+                    go to Tools->Administration->Libraries and Groups
+                </div>
+                Next up:
+                <input type="submit" name="start" value="Add a patron category"/>
+            </form>
 
-        <!--Implement if statement to determine if library was succesfully created here....-
-        <div>
-             <p> Library was not successfully created</p>
-        </div>
-        -->
+        [%ELSE %]
+            <!--Implement if statement to determine if library was succesfully created here....-->
+            <form name="retrylibrary" method="post" action="onboarding.pl">
+                <input type="hidden" name="step" value="1"/>
+                <h1 align="left">Failed </h1>
+                <div>
+                    <p> Library was not successfully created</br>
+                    Please try again or contact your system administrator. </p>
+                </div>
+                <input type="submit" value="Try again"/>
+            </form>
+        [%END%]
+        
 [% ELSE %]
 <!--Create a library screen 1-->
         <h2>Create a Library</h2> 
         <form name="LibraryCreation" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="1"/>
-                 <input type="hidden" name="op" value="add_validate" />
                  <input type="hidden" name="createlibrary" value="createlibrary"/>
                  <ol>
                      <li>

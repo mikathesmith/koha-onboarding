@@ -59,7 +59,7 @@
                              <select name="categorycode" id="categorycode" required="required" onchange = "update_categorycode(this);">
                                                    
                              [% FOREACH category IN categories %]
-                                <option value = "[% category.description %]"> [%category.description %]
+                                <option name="categorycode" value = "[% category.description %]"> [%category.description %]
                             [%END%]
                              </select>
                         <span class="required">Required</span>
@@ -69,7 +69,7 @@
                         <label for="itemtype"> Item type: </label>
                         <select id="itemtype" name="itemtype" required="required">
                             [% FOREACH item IN itemtypes %]
-                                <option value = "[% item.itemtype %]"> [% item.itemtype %]
+                                <option name="itemtype" value = "[% item.itemtype %]"> [% item.itemtype %]
                             [%END%]
                             </select>
                             <span class="required"> Required</span>

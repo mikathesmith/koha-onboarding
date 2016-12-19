@@ -39,25 +39,39 @@
      </form>
 
 <!--else if the user has not previously imported sample patron categories check if the user has pressed the button name="add_validate" in the create patron category screen 1, and if they have pressed that button then display the below screen with a button to redirect the user to step 3-->
-[% ELSIF op == 'add_validate' %]
-     <form name="createpatroncategory" method="post" action="onboarding.pl">
-             <input type="hidden" name="step" value="3"/>
+[% ELSIF (createcat) %]
+    [% IF message != "error_on_insert" %]
+     <form name="createcat" method="post" action="onboarding.pl">
+          Message is [%message%] 
+            <input type="hidden" name="step" value="3"/>
              <h1 align="left">  New patron category</h1>
              <div>
-                 <p> Success: Patron category created!</p>
+                 <p> Success: Patron category created! Your patron category code is [% category.categorycode %] </p>
                  <p> To add another patron category and for more settings<br>
                  go to More->Administration->Patrons & Circulation->Patron Categories</p>
              </div>
              Next up:<br>
              <input type="submit" name="start" value="Add a patron"><!-- When the user clicks on this button then redirect them to step 3 of the onboarding tool-->
      </form>
+     [% ELSE %]
+        <form name="retrypatcat" method="post" action="onboarding.pl">
+        Message is [% message %]    
+        <input type="hidden" name="step" value="2"/>
+            <h1 align="left">Failed</h1>
+            <div>Patron Category was not successfully created.</br>
+            Please try again or contact your system administrator.</p>
+            </div>
+            <input type="submit" value="Try again"/>
+        </form>
+    [% END %] 
+        
 
 [% ELSE %] <!--Else display create patron category screen 1 where the user can input values to create their first patron category-->
     <h1 align="left"> Create a new Patron Category</h2>
     <form id="category_form" method="post" action="onboarding.pl">
         <fieldset class="rows">
             <input type="hidden" name="step" value="2"/>
-            <input type="hidden" name="op" value="add_validate" />
+            <input type="hidden" name="createcat" value="createcat" />
                 <ol>
                     <li>
                         <label for="categorycode" class="required">Category code: </label>
