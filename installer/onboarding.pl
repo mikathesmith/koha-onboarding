@@ -381,7 +381,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         my $description = $input->param('description');
 
         #store the input from the form - only 2 fields 
-        my $itemtype= Koha::ItemType->new(
+        $itemtype= Koha::ItemType->new(
             { itemtype    => $itemtype_code,
               description => $description,
             }
