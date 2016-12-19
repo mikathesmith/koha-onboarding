@@ -42,7 +42,6 @@
 [% ELSIF op == "add_validate" %]
     [% IF message != "error_on_insert" %]
      <form name="createcat" method="post" action="onboarding.pl">
-          Message is [%message%] 
             <input type="hidden" name="step" value="3"/>
              <h1 align="left">  New patron category</h1>
              <div>
@@ -101,40 +100,10 @@
                     <li>
                         <label for="category_type" class="required">Category type: </label>
                         <select name="category_type" value="category_type" class='required' required='required'>
-                            [% IF category and category.category_type == 'A' %]
-                                <option value="A" selected="selected">Adult</ option>
-                            [% ELSE %]
-                                <option value="A">Adult</option>
-                            [% END %]
-
-                            [% IF category and category.category_type == 'C' %]
-                                <option value="C" selected="selected">Child</ option>
-                            [% ELSE %]
-                                <option value="C">Child</option>
-                            [% END %]
-
                             [% IF category and category.category_type == 'S' %]
                                 <option value="S" selected="selected">Staff</option>
                             [% ELSE %]
                                 <option value="S">Staff</option>
-                            [% END %]
-
-                            [% IF category and category.category_type == 'I' %]
-                                <option value="I" selected="selected">Organization</option>
-                            [% ELSE %]
-                                <option value="I">Organization</option>
-                            [% END %]
-
-                            [% IF category and category.category_type == 'P' %]
-                                <option value="P" selected="selected">Professional</option>
-                            [% ELSE %]
-                                <option value="P">Professional</option>
-                            [% END %]
-
-                            [% IF category and category.category_type == 'X' %]
-                                <option value="X" selected="selected">Statistical</option>
-                            [% ELSE %]
-                                <option value="X">Statistical</option>
                             [% END %]
                         </select>
                         <span class="required">Required</span>
@@ -174,11 +143,11 @@
                             <ol>
                                 <li>
                                     <label for="enrolmentperiod" style="width:6em;">In months: </label>
-                                    <input type="text" name="enrolmentperiod" size="3"     maxlength="1" value="[% IF category.enrolmentperiod %][% category.enrolmentperiod %][% END %]" /> months 
+                                    <input type="text" class="enrollmentperiod" name="enrolmentperiod" size="3" maxlength="3" value="[% IF category.enrolmentperiod %][% category.enrolmentperiod %][% END %]" /> months 
                                 </li>
                                 <li>
                                     <label for="enrolmentperioddate" style="width:6em;">Until date: </label>
-                                    <input type="text" name="enrolmentperioddate"  value="[% category.enrolmentperioddate | $KohaDates %]" />
+                                    <input type="text" class="enrollmentperiod" name="enrolmentperioddate" id="enrolmentperioddate" value="[% category.enrolmentperioddate | $KohaDates %]" />
                                 </li>
                             </ol>
                      </fieldset>

@@ -460,12 +460,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         }else{
             Koha::IssuingRule->new()->set($params)->store(); 
             }
-
-   
     }
     
-
-
 
 }
 
