@@ -184,21 +184,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         debug           => 1,
     }
     );
-    #When the user first arrives on the page
-#if ( $op eq 'add_form' ) {
-#    if ($categorycode) {
-#          $category          = Koha::Patron::Categories->find($categorycode);
-#      }
+    
 
-#    $template->param(
-#          category => $category,
-#  );
-
-#   if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
-#           C4::Form::MessagingPreferences::set_form_values(
-#               { categorycode => $categorycode }, $template );      }
-#       }
-#   }
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
 
@@ -307,7 +294,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
        my %newdata;
 
-      
+#Store the template form values in the newdata hash      
          $newdata{borrowernumber} = $input->param('borrowernumber');       
          $newdata{surname}  = $input->param('surname');
          $newdata{firstname}  = $input->param('firstname');
@@ -319,8 +306,45 @@ if ( $start && $start eq 'Start setting up my Koha' ){
          $newdata{password2} = $input->param('password2');
          $newdata{dateexpiry} = '12/10/2016';
 
+#Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
          my $borrowernumber = &AddMember(%newdata);
 
+
+        my %member2;
+        $member2{'borrowernumber'}=$borrowernumber;
+        
+        my $flag = $input->param('flag');
+        
+        if ($input->param('newflags')) {
+             my $dbh=C4::Context->dbh();
+             my @perms = $input->multi_param('flag');
+             my %all_module_perms = ();
+             my %sub_perms = ();
+             foreach my $perm (@perms) {
+                  if ($perm !~ /:/) {
+                       $all_module_perms{$perm} = 1;
+                   } else {
+                        my ($module, $sub_perm) = split /:/, $perm, 2;
+                        push @{ $sub_perms{$module} }, $sub_perm;
+                   }
+             }
+
+
+        # construct flags
+          my $module_flags = 0;
+          my $sth=$dbh->prepare("SELECT bit,flag FROM userflags ORDER BY bit");
+          $sth->execute(); 
+          while (my ($bit, $flag) = $sth->fetchrow_array) {
+              if (exists $all_module_perms{$flag}) {
+                   $module_flags += 2**$bit;
+              }
+          }
+
+           $sth = $dbh->prepare("UPDATE borrowers SET flags=? WHERE borrowernumber=?");
+           $sth->execute($module_flags, $borrowernumber);
+
+
+#Error handling checking if the patron was created successfully
         if(!$borrowernumber){
             push @messages, {type=> 'error', code => 'error_on_insert'};
         }else{
@@ -445,7 +469,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 }
 
-
+}
 
 output_html_with_http_headers $input, $cookie, $template->output;
 

@@ -93,7 +93,17 @@
                             <span class="required">Required</span>
                         </li> 
                     </ol>
-                     <ol>
+                    
+                    <ol>
+                    
+                            <h3> Patron permissions</h3>
+                            <input type="hidden" name="newflags" value="1"/>
+                            <li>
+                                <input type="hidden" class="flag parent" id="flag-0" name="flag" value="superlibrarian"/>
+                                <label name="permissioncode" for="flag-0"> superlibrarian</label>
+                            </li>                    
+                    </ol>
+                    <ol>
                     <h3>OPAC/Staff Login</h3> 
                         <li>
                             <label for="userid" class="required">Username: </label>
