@@ -68,7 +68,7 @@
                     <ol>
                         <li>
                             <label for="cardnumber" class="required">Card Number: </label>
-                            <input type="text" id="cardnumber" name="cardnumber" size="10" maxlength="20" value="[% cardnumber | html %]" class="required">
+                            <input type="number" min="0"id="cardnumber" name="cardnumber" maxlength="20" value="[% cardnumber | html %]" class="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
