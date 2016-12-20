@@ -607,7 +607,7 @@ sub AddMember {
     }
 
     my $patron_category = $schema->resultset('Category')->find( $data{'categorycode'} );
-    $data{'privacy'} =
+    $data{'privacy'} = 
         $patron_category->default_privacy() eq 'default' ? 1
       : $patron_category->default_privacy() eq 'never'   ? 2
       : $patron_category->default_privacy() eq 'forever' ? 0

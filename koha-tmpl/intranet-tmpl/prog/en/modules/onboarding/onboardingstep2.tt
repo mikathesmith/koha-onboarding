@@ -135,13 +135,13 @@ $(document).ready(function(){
                 <ol>
                     <li>
                         <label for="categorycode" class="required">Category code: </label>
-                        <input type="text" name="categorycode" value="[% category.categorycode |html %]" size="10" maxlength="10" class="required" required="required" />
+                        <input type="text" style="text-transform: uppercase;" name="categorycode" value="[% category.categorycode |html %]" size="10" maxlength="10" class="required" required="required" />
                         <span class="required">Required</span>
                     </li>
 
                     <li>
                         <label for="description" class="required">Description: </label>
-                        <input type="text" name="description" size="40" maxlength="80" class="required" required="required" value="[% category.description |html %]" />
+                        <input type="text" style="text-transform:capitalize;" name="description" size="40" maxlength="80" class="required" required="required" value="[% category.description |html %]" />
                         <span class="required">Required</span>
                     </li>
 

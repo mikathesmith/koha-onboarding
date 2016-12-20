@@ -54,12 +54,12 @@
                         <li>
                             <label for="surname" class="required">Surname: </label>
 
-                            <input type="text" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
+                            <input type="text" style="text-transform:capitalize" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="firstname" class="required">First Name: </label>
-                            <input style= "text-transform:uppercase;" type="text" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
+                            <input style= "text-transform:capitalize;" type="text" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>
@@ -68,7 +68,7 @@
                     <ol>
                         <li>
                             <label for="cardnumber" class="required">Card Number: </label>
-                            <input type="text" id="cardnumber" name="cardnumber" size="10" maxlength="20" value="[% cardnumber | html %]" class="required">
+                            <input type="number" min="1" id="cardnumber" name="cardnumber" maxlength="20" value="[% cardnumber | html %]" class="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
@@ -87,7 +87,7 @@
                             <label for="categorycode_entry" class="required"> Patron Category</label>
                             <select id="categorycode_entry" name="categorycode_entry" onchange="update_category_code(this);">
                            [% FOREACH category IN categories %] 
-                                <option name="categorycode_entry" value = "[% category.categorycode %]"> [%category.categorycode %]</option>
+                                <option name="categorycode_entry" value = "[% category.categorycode %]"> [%category.description %]</option>
                            [% END %]
                             </select>
                             <span class="required">Required</span>
@@ -124,15 +124,4 @@
              </fieldset><br>
                 <input type="submit" class="action" value="Submit"/>
      </form>
-[% END %]        
-
-
-
-
-
-
-
-
-
-
-
+[% END %]
