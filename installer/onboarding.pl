@@ -188,22 +188,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
-
-    if($op eq 'add_form'){
-        my $category;
-        if($categorycode){
-            $category = Koha::Patron::Categories->find($categorycode);
-        }
-        $template->param(
-                category => $category,
-                );
-
-        if ( C4::Context->preference('EnhancedMessagingPreferences') ) {
-           C4::Form::MessagingPreferences::set_form_values(
-               { categorycode => $categorycode }, $template );      }   
-
         
-    }elsif ( $op eq 'add_validate' ) {
+    if ( $op eq 'add_validate' ) {
         my $categorycode = $input->param('categorycode');
         my $description = $input->param('description');
         my $overduenoticerequired = $input->param('overduenoticerequired');
@@ -245,11 +231,10 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
         $template->param('message' => $message); 
     
-        }
+    }
 
 #Create a patron
 }elsif ( $step && $step == 3 ){
-
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
               group_types => [
@@ -268,7 +253,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             categories => $categories,
     );
 
-
     my $input = new CGI;
     my $op = $input->param('op') // 'list';
 
@@ -284,16 +268,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 debug => 1,
     });
 
-    if($op eq 'add_form'){
-        my $member;
-        $template->param(
-            member => $member,
-        );
-   }
 
-  elsif($op eq 'add_validate'){
-
-       my %newdata;
+    if($op eq 'add_validate'){
+        my %newdata;
 
 #Store the template form values in the newdata hash      
          $newdata{borrowernumber} = $input->param('borrowernumber');       
@@ -317,18 +294,17 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         }
 
 
-
-
-         warn $newdata{privacy};
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
-         my $borrowernumber = &AddMember(%newdata);
-
-
+        my $borrowernumber = &AddMember(%newdata);
+i
+    
+#Create a hash named member2 and fillit with the borrowernumber of the borrower that has just been created 
         my %member2;
         $member2{'borrowernumber'}=$borrowernumber;
         
+
         my $flag = $input->param('flag');
-        
+     
         if ($input->param('newflags')) {
              my $dbh=C4::Context->dbh();
              my @perms = $input->multi_param('flag');
@@ -366,7 +342,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         }
  
   }
-
+  }
 
 }elsif ( $step && $step == 4){
     my $createitemtype = $input->param('createitemtype');
@@ -395,14 +371,14 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         my $description = $input->param('description');
 
         #store the input from the form - only 2 fields 
-        $itemtype= Koha::ItemType->new(
+        my $thisitemtype= Koha::ItemType->new(
             { itemtype    => $itemtype_code,
               description => $description,
             }
         );
-        eval{ $itemtype->store; };
+        eval{ $thisitemtype->store; };
         #Error messages
-        if($itemtype){
+        if($thisitemtype){
             $message = 'success_on_insert';
         }else{
             $message = 'error_on_insert';
@@ -410,24 +386,23 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
         $template->param('message' => $message); 
     }
-
-
-
-
 }elsif ( $step && $step == 5){
+    my $test="a";
+    warn $test;
+    
     #Fetching all the existing categories to display in a drop down box
     my $categories;
     $categories= Koha::Patron::Categories->search();
     $template->param(
         categories => $categories,
     );
-
+    
     my $itemtypes;
     $itemtypes= Koha::ItemTypes->search();
     $template->param(
         itemtypes => $itemtypes,
     );
-
+    
     my $input = CGI->new;
     my($template, $loggedinuser, $cookie)  =get_template_and_user({
             template_name => "/onboarding/onboardingstep5.tt",
@@ -437,17 +412,11 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             flagsrequired=> {parameters => 'manage_circ_rules'},
             debug =>1,
     });
-    
     my $type = $input->param('type');
     my $branch = $input->param('branch');
-    
-    
-    
     if($op eq 'add_form'){
-
-
-
     }
+        
     elsif($op eq 'add_validate'){
         my $bor = $input->param('categorycode');
         my $itemtype = $input->param('itemtype');
@@ -473,13 +442,11 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             $issuingrule->set($params)->store();
         }else{
             Koha::IssuingRule->new()->set($params)->store(); 
-            }
+        }
     }
-    
+ }
 
-}
 
-}
 
 output_html_with_http_headers $input, $cookie, $template->output;
 
