@@ -272,7 +272,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $input = new CGI;
     my $op = $input->param('op') // 'list';
 
-    my @messages; 
+    my @messages;
+    my @errors;
 
     my ($template, $loggedinuser, $cookie)= get_template_and_user({
                 template_name => "/onboarding/onboardingstep3.tt",
@@ -306,6 +307,14 @@ if ( $start && $start eq 'Start setting up my Koha' ){
          $newdata{password2} = $input->param('password2');
          $newdata{dateexpiry} = '12/10/2016';
          $newdata{privacy} = "default";
+
+        if(my $error_code = checkcardnumber($newdata{cardnumber},$newdata{borrowernumber})){
+            push @errors, $error_code == 1
+                ? 'ERROR_cardnumber_already_exists'
+                :$error_code == 2 
+                    ? 'ERROR_cardnumber_length'
+                    :()
+        }
 
 
 
