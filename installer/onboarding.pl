@@ -296,8 +296,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
         my $borrowernumber = &AddMember(%newdata);
-i
-    
 #Create a hash named member2 and fillit with the borrowernumber of the borrower that has just been created 
         my %member2;
         $member2{'borrowernumber'}=$borrowernumber;
