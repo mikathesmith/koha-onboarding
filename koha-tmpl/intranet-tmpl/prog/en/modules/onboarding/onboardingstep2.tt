@@ -2,23 +2,84 @@
 [% USE Koha %]
 [% USE KohaDates %]
 [% USE Price %]
-
 [% INCLUDE 'doc-head-open.inc' %]
+<title> Add a patron category</title>
 [% INCLUDE 'installer-doc-head-close.inc' %]
 [% INCLUDE 'calendar.inc' %]
-[% INCLUDE 'datatables.inc' %]
-
-
-<head>
-<title> Add a patron category</title>
-<!--JQuery scripts for create patron category-->
 <script type="text/javascript">
-     var MSG_CATEGORYCODE_CHARS = _("Category code can only contain the following characters: letters, numbers, - and _.");
-     var MSG_BOTH_ENROLLMENTPERIODS = _("Please choose only one enrollment period setting.");
-     var MSG_ONE_ENROLLMENTPERIOD = ("Please choose an enrollment period in months OR by date.");
+     var MSG_CATEGORYCODE_CHARS = (_("Category code can only contain the following characters: letters, numbers, - and _."));
+     var MSG_ONE_ENROLLMENTPERIOD =(_("Please choose an enrollment period in months OR by date."));
 </script>
-<script type="text/javascript" src="[% themelang %]/js/categories.js"></script>
-<style type="text/css">#enrolmentmessage.hint { display : none; }</style>
+<script type="text/javascript">
+jQuery.validator.addMethod( "letters_numbers", function(value,element){
+    var patt = /^[a-zA-Z0-9\-_]+$/g;
+    if (patt.test(element.value)) {
+        return true;
+    } else {
+        return false;
+    }
+}, MSG_CATEGORYCODE_CHARS);
+
+jQuery.validator.addMethod( "enrollment_period", function(){
+    enrolmentperiod = $("#enrolmentperiod").val();
+    enrolmentperioddate = $("#enrolmentperioddate").val();
+    if ( $("#enrolmentperiod").val() !== "" && $("#enrolmentperioddate").val() !== "" ) {
+        return false;
+    } else {
+        return true;
+    }
+}, MSG_ONE_ENROLLMENTPERIOD);
+
+$(document).ready(function(){
+     $("#category_form").validate({
+         rules: {
+             categorycode: {
+                 required: true,
+                 letters_numbers: true
+             },
+             description: "required",
+             enrolmentperiod: {
+                 required: function(element){
+                    return $("#enrolmentperioddate").val() === "";
+             },
+                 digits: true,
+                 enrollment_period: true
+             },
+             enrolmentperioddate: {
+                 required: function(element){
+                   return $("#enrolmentperiod").val() === "";
+                 },
+                 enrollment_period: true
+             },
+             dateofbirthrequired: {
+                digits: true
+             },
+             upperagelimit: {
+                 digits: true
+             },
+             enrolmentfee: {
+                 number: true
+             },
+             reservefee: {
+                 number: true
+             },
+             category_type: {
+                 required: true
+             }
+         },
+         messages: {
+             enrolmentperiod: {
+                 required: MSG_ONE_ENROLLMENTPERIOD
+             },
+             enrolmentperioddate: {
+                 required: MSG_ONE_ENROLLMENTPERIOD
+             }
+         }
+ 
+     });
+
+})
+</script>
 
 </head>
 
@@ -66,9 +127,9 @@
         
 
 [% ELSE %] <!--Else display create patron category screen 1 where the user can input values to create their first patron category-->
-    <h1 align="left"> Create a new Patron Category</h2>
-    <form id="category_form" method="post" action="onboarding.pl">
-        <fieldset class="rows">
+    <h1 align="left"> Create a new Patron Category</h1>
+       <form id="category_form" method="post" action="onboarding.pl">  
+       <fieldset class="rows">
             <input type="hidden" name="step" value="2"/>
             <input type="hidden" name="op" value="add_validate" />
                 <ol>
@@ -156,9 +217,7 @@
     </form>
 [% END %]
 
-
-
-
+[% INCLUDE 'intranet-bottom.inc' %]
 
 
 
