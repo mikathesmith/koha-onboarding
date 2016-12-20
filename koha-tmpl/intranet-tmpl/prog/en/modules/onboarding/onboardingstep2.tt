@@ -204,7 +204,7 @@ $(document).ready(function(){
                             <ol>
                                 <li>
                                     <label for="enrolmentperiod" style="width:6em;">In months: </label>
-                                    <input type="text" class="enrollmentperiod" name="enrolmentperiod" size="3" maxlength="3" value="[% IF category.enrolmentperiod %][% category.enrolmentperiod %][% END %]" /> months 
+                                    <input type="number" min="0" class="enrollmentperiod" name="enrolmentperiod" size="3" maxlength="3" value="[% IF category.enrolmentperiod %][% category.enrolmentperiod %][% END %]" /> months 
                                 </li>
                                 <li>
                                     <label for="enrolmentperioddate" style="width:6em;">Until date: </label>
