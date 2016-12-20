@@ -55,11 +55,11 @@
                  <input type="hidden" name="op" value="add_validate" />
                     <ol>
                     <li>
-                             <label for="categorycode" class="required">Patron Category: </label>
-                             <select name="categorycode" id="categorycode" required="required" onchange = "update_categorycode(this);">
-                                                   
+                             <label for="categorycode_entry" class="required">Patron Category: </label>
+                             <select name="categorycode_entry" id="categorycode" required="required" onchange = "update_categorycode(this);">
+                               <!-- <option name="categorycode" value="All">All-->
                              [% FOREACH category IN categories %]
-                                <option name="categorycode" value = "[% category.description %]"> [%category.description %]
+                                <option name="categorycode_entry" value = "[% category.categorycode %]"> [%category.description %]</option> 
                             [%END%]
                              </select>
                         <span class="required">Required</span>

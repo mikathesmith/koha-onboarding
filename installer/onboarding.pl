@@ -305,7 +305,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
          $newdata{password} = $input->param('password');
          $newdata{password2} = $input->param('password2');
          $newdata{dateexpiry} = '12/10/2016';
+         $newdata{privacy} = "default";
 
+
+
+
+         warn $newdata{privacy};
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
          my $borrowernumber = &AddMember(%newdata);
 

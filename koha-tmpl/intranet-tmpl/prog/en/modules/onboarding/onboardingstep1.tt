@@ -89,12 +89,12 @@
                  <ol>
                      <li>
                         <label for="branchcode" class="required">Library code: </label>
-                        <input type="text" name="branchcode" id="branchcode" size="10" maxlength="10" value="[% library.branchcode |html %]" class="required" required="required" />
+                        <input type="text" style="text-transform: uppercase;"name="branchcode" id="branchcode" size="10" maxlength="10" value="[% library.branchcode |html %]" class="required" required="required" />
                         <span class="required">Required</span>
                     </li>
                     <li>
                         <label for="branchname" class="required">Name: </label>
-                        <input type="text" name="branchname" id="branchname" size="80" value="[% library.branchname |html %]" class="    required" required="required" style="width:200px;">
+                        <input type="text" style="text-transform:capitalize;" name="branchname" id="branchname" size="80" value="[% library.branchname |html %]" class="    required" required="required" style="width:200px;">
                         <span class="required">Required</span>
                     </li>
                  </ol>

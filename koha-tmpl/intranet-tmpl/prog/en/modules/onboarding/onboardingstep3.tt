@@ -54,12 +54,12 @@
                         <li>
                             <label for="surname" class="required">Surname: </label>
 
-                            <input type="text" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
+                            <input type="text" style="text-transform:capitalize" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="firstname" class="required">First Name: </label>
-                            <input style= "text-transform:uppercase;" type="text" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
+                            <input style= "text-transform:capitalize;" type="text" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>
@@ -87,7 +87,7 @@
                             <label for="categorycode_entry" class="required"> Patron Category</label>
                             <select id="categorycode_entry" name="categorycode_entry" onchange="update_category_code(this);">
                            [% FOREACH category IN categories %] 
-                                <option name="categorycode_entry" value = "[% category.description %]"> [%category.description %]</option>
+                                <option name="categorycode_entry" value = "[% category.categorycode %]"> [%category.description %]</option>
                            [% END %]
                             </select>
                             <span class="required">Required</span>
