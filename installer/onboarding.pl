@@ -256,7 +256,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $input = new CGI;
     my $op = $input->param('op') // 'list';
 
-    my @messages; 
+    my @messages;
+    my @errors;
+
     my ($template, $loggedinuser, $cookie)= get_template_and_user({
                 template_name => "/onboarding/onboardingstep3.tt",
                 query => $input,
@@ -271,21 +273,29 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         my %newdata;
 
 #Store the template form values in the newdata hash      
-        $newdata{borrowernumber} = $input->param('borrowernumber');       
-        $newdata{surname}  = $input->param('surname');
-        $newdata{firstname}  = $input->param('firstname');
-        $newdata{cardnumber} = $input->param('cardnumber');
-        $newdata{branchcode} = $input->param('libraries');
-        $newdata{categorycode} = $input->param('categorycode_entry');
-        $newdata{userid} = $input->param('userid');
-        $newdata{password} = $input->param('password');
-        $newdata{password2} = $input->param('password2');
-        $newdata{dateexpiry} = '12/10/2016';
+         $newdata{borrowernumber} = $input->param('borrowernumber');       
+         $newdata{surname}  = $input->param('surname');
+         $newdata{firstname}  = $input->param('firstname');
+         $newdata{cardnumber} = $input->param('cardnumber');
+         $newdata{branchcode} = $input->param('libraries');
+         $newdata{categorycode} = $input->param('categorycode_entry');
+         $newdata{userid} = $input->param('userid');
+         $newdata{password} = $input->param('password');
+         $newdata{password2} = $input->param('password2');
+         $newdata{dateexpiry} = '12/10/2016';
+         $newdata{privacy} = "default";
+
+        if(my $error_code = checkcardnumber($newdata{cardnumber},$newdata{borrowernumber})){
+            push @errors, $error_code == 1
+                ? 'ERROR_cardnumber_already_exists'
+                :$error_code == 2 
+                    ? 'ERROR_cardnumber_length'
+                    :()
+        }
+
 
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
         my $borrowernumber = &AddMember(%newdata);
-
-    
 #Create a hash named member2 and fillit with the borrowernumber of the borrower that has just been created 
         my %member2;
         $member2{'borrowernumber'}=$borrowernumber;
