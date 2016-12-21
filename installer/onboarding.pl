@@ -510,6 +510,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         
 #New code from smart-rules.tt starts here. Needs to be added to library
     if ($branch eq "*") {
+
+#Allows for the 'All' option to work when selecting all patron categories for a circulation rule to apply to. 
         if ($bor eq "*") {
             my $sth_search = $dbh->prepare("SELECT count(*) AS total
                                             FROM default_circ_rules");
@@ -530,28 +532,28 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             } else {
                 $sth_insert->execute($maxissueqty);
             }
-        } else {
+        }
+#Allows for the 'All' option to work when selecting all patron categories for a circulation rule to apply to
+        if ($itemtype eq "*") {
             my $sth_search = $dbh->prepare("SELECT count(*) AS total
-                                            FROM default_borrower_circ_rules
-                                            WHERE categorycode = ?");
-            my $sth_insert = $dbh->prepare(q|
-                INSERT INTO default_borrower_circ_rules
-                    (categorycode, maxissueqty)
-                    VALUES (?, ?)
-            |);
-            my $sth_update = $dbh->prepare(q|
-                UPDATE default_borrower_circ_rules
-                SET maxissueqty = ?,
-                WHERE categorycode = ?
-            |);
+                                        FROM default_branch_circ_rules
+                                        WHERE branchcode = ?");
+            my $sth_insert = $dbh->prepare("INSERT INTO default_branch_circ_rules
+                                        (branchcode, onshelfholds)
+                                        VALUES (?, ?)");
+            my $sth_update = $dbh->prepare("UPDATE default_branch_circ_rules
+                                        SET onshelfholds = ?
+                                        WHERE branchcode = ?");
             $sth_search->execute($branch);
             my $res = $sth_search->fetchrow_hashref();
             if ($res->{total}) {
-                $sth_update->execute($maxissueqty, $bor);
+                $sth_update->execute($onshelfholds, $branch);
+            } else {
+            $sth_insert->execute($branch, $onshelfholds);
             }
-        }
+        }   
     }
-#End new code 
+#End new code
 
        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype, branchcode => $br });
        if($issuingrule){
