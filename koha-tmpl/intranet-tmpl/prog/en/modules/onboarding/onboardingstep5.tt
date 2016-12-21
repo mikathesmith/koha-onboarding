@@ -1,18 +1,9 @@
-<!--Includes for creating circulation rule--> 
 [% INCLUDE 'doc-head-open.inc' %]
-
+<title>Create Circulation rule</title>
 [% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END %]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 
-<head>
-<title>Create Circulation rule</title>
-
-<!--jQuery scripts for creating circulation rule-->
-
-
-
 </head>
-
 <div>
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
@@ -28,10 +19,8 @@
 [% IF op == "add_validate" %]
         <!--New circulation rule created-->
         <form name="finish" method="post" action="onboarding.pl">
-              <input type="hidden" name="op" value="finish" />
-
+            <input type="hidden" name="op" value="finish" />
             <h1 align="left"> New Circulation rule </h1>
-
             <div>   
                  <p> Success: New circulation rule created!</p>
                  <p> To create circulation rule, go to <br>
@@ -40,15 +29,9 @@
                  Next up:
                  <input type="submit" name="op" value="Finish"/>
         </form>
-           <!-- <div>
-                  <p> Oh no! Circulation Rule was not created</p>
-            </div> -->
-
-
 [% ELSE %]    
 <!--Create a circulation rule screen 1-->
        <h1 align="left"> Create a new Circulation rule </h1>
-  
        <form name="createcirculationrule" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="5"/>
@@ -65,13 +48,13 @@
                         <span class="required">Required</span>
                     </li>
                     <li>
-                             <label for="categorycode" class="required">Patron Category: </label>
-                             <select name="categorycode" id="categorycode" required="required" onchange = "update_categorycode(this);">
+                        <label for="categorycode" class="required">Patron Category: </label>
+                        <select name="categorycode" id="categorycode" required="required" onchange = "update_categorycode(this);">
                                <!-- <option name="categorycode" value="All">All-->
-                             [% FOREACH category IN categories %]
-                                <option name="categorycode" value = "[% category.categorycode %]"> [%category.description %]</option> 
-                            [%END%]
-                             </select>
+                        [% FOREACH category IN categories %]
+                             <option name="categorycode" value = "[% category.categorycode %]"> [%category.description %]</option> 
+                        [%END%]
+                        </select>
                         <span class="required">Required</span>
                     </li>
 
@@ -81,63 +64,59 @@
                             [% FOREACH item IN itemtypes %]
                                 <option name="itemtype" value = "[% item.itemtype %]"> [% item.itemtype %]
                             [%END%]
+                        </select>
+                        <span class="required"> Required</span>
+                    </li>
+                    <li>
+                        <label for="maxissueqty" class="required">Current checkouts allowed: </label>
+                        <input type="number" min="0" name="maxissueqty" id="maxissueqty" size="10" maxlength="10" value="" class="required" required="required" />
+                        <span class="required">Required</span>
+                    </li>
+                     
+                    <li>
+                        <label for="issuelength" class="required">Loan Period: </label>
+                        <input type="number" min="0" name="issuelength" id="issuelength" size="10" maxlength="10" value="" class="required" required="required" />
+                        <span class="required">Required</span>
+                   </li>
+                   <li>
+                        <label for="lengthunit">Units: </label>
+                        <select name="lengthunit" id="lengthunit" required="required">
+                        [% SET units = 'days' %]
+                        [% IF category %] <!--Check  if category is the correct value name in the context of units of days that a loan period is for in the item borrowing script-->
+                            [% SET default_privacy = category.default_privacy %]
+                        [% END %]
+
+                        [% SWITCH units %]
+                             [% CASE 'days' %]
+                                   <option value="days" selected="selected">Days</option>
+                                   <option value="hours">Hours</option>
+                             [% CASE 'hours' %]
+                                   <option value="days">Days</option>
+                                   <option value="hours" selected="selected">Hours</option>
+                             [% END %]
                             </select>
-                            <span class="required"> Required</span>
-                        </li>
+                     </li>
+                     <li>
+                        <label for="renewalsallowed" class="required">Renewals Allowed: </label>
+                        <input type="number"min="0" name="renewalsallowed" id="renewalsallowed" size="10" maxlength="10" value="" class="required" required="required" />
+                        <span class="required">Required</span>
+                     </li>
 
-                        <li>
-                            <label for="maxissueqty" class="required">Current checkouts allowed: </label>
-                            <input type="number" min="0" name="maxissueqty" id="maxissueqty" size="10" maxlength="10" value="" class="required" required="required" />
-                            <span class="required">Required</span>
-                        </li>
-                        
-                        <li>
-                             <label for="issuelength" class="required">Loan Period: </label>
-                             <input type="number" min="0" name="issuelength" id="issuelength" size="10" maxlength="10" value="" class="required" required="required" />
-                              <span class="required">Required</span>
-                        </li>
+                     <li>
+                        <label for="renewalperiod" class="required">Renewals Period: </label>
+                        <input type="number" min="0"name="renewalperiod" id="renewalperiod" size="10" maxlength="10" value="" class="required" required="required" />
+                        <span class="required">Required</span>
+                     </li>
 
-                        <li>
-                            <label for="lengthunit">Units: </label>
-                            <select name="lengthunit" id="lengthunit" required="required">
-                                   [% SET units = 'days' %]
-
-                                   [% IF category %] <!--Check  if category is the correct value name in the context of units of days that a loan period is for in the item borrowing script-->
-                                   [% SET default_privacy = category.default_privacy %]
-                                   [% END %]
-
-                                   [% SWITCH units %]
-                                   [% CASE 'days' %]
-                                     <option value="days" selected="selected">Days</option>
-                                     <option value="hours">Hours</option>
-                                   [% CASE 'hours' %]
-                                     <option value="days">Days</option>
-                                     <option value="hours" selected="selected">Hours</option>
-                                   [% END %]
-                            </select>
-                        </li>
-
-                        <li>
-                             <label for="renewalsallowed" class="required">Renewals Allowed: </label>
-                             <input type="number"min="0" name="renewalsallowed" id="renewalsallowed" size="10" maxlength="10" value="" class="required" required="required" />
-                              <span class="required">Required</span>
-                        </li>
-
-                         <li>
-                             <label for="renewalperiod" class="required">Renewals Period: </label>
-                             <input type="number" min="0"name="renewalperiod" id="renewalperiod" size="10" maxlength="10" value="" class="required" required="required" />
-                              <span class="required">Required</span>
-                        </li>
-
-                         <li>
-                            <label for="onshelfholds">On shelf holds allowed: </label>
-                            <select name="onshelfholds" id="onshelfholds" required="required">
-                                     <option value="yes" selected="selected">Yes</option>
-                                     <option value="anyunavailable">If any unavailable</option>
-                                    <option value="allunavailable">If all unavailable</option>
-                            </select>
-                        </li>
-                    </ol>
+                     <li>
+                        <label for="onshelfholds">On shelf holds allowed: </label>
+                        <select name="onshelfholds" id="onshelfholds" required="required">
+                              <option value="yes" selected="selected">Yes</option>
+                              <option value="anyunavailable">If any unavailable</option>
+                              <option value="allunavailable">If all unavailable</option>
+                        </select>
+                     </li>
+                  </ol>
             </fieldset><br>
                 <input type="submit" class="action" value="Submit"/> 
      </form>
