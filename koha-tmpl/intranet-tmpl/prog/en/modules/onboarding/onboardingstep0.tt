@@ -39,7 +39,7 @@
 <div>
       <h1 align="center"> Welcome to Koha</h1>
       <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
-      <h2 align="center"> We're just going to set up a few things......</h2>
+      <h2 align="center"> You haven't installed some sample data, so we're just going to set up a few more things...</h2>
       <form name="startkoha" method="post" action="onboarding.pl">
          <input type="hidden" name="step" value="1"/>
          <input type="submit" name="start" value="Start setting up my Koha"/>

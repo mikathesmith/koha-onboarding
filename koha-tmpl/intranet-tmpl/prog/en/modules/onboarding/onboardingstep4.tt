@@ -20,8 +20,6 @@
 
 [% IF itemtypes.count > 0 %]
     <br>
-    h no! Patron was not created</p>
-
         <h3 align="left">You do not need to create a item type as you have already installed the sample item type data previously</h3>
      <form name="skipitemtype" method="post" action="onboarding.pl">
           <input type="hidden" name="step" value="5"/>
