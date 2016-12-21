@@ -68,7 +68,7 @@
                     <ol>
                         <li>
                             <label for="cardnumber" class="required">Card Number: </label>
-                            <input type="number" min="1" id="cardnumber" name="cardnumber" maxlength="20" value="[% borrower.cardnumber | html %]" class="required">
+                            <input type="number" min="1" id="cardnumber" name="cardnumber" maxlength="20" value="[% borrower.cardnumber | html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
