@@ -507,7 +507,52 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         };
       
          my @messages;
-         
+        
+#New code from smart-rules.tt starts here. Needs to be added to library
+    if ($branch eq "*") {
+        if ($bor eq "*") {
+            my $sth_search = $dbh->prepare("SELECT count(*) AS total
+                                            FROM default_circ_rules");
+            my $sth_insert = $dbh->prepare(q|
+                INSERT INTO default_circ_rules
+                    (maxissueqty)
+                    VALUES (?)
+            |);
+            my $sth_update = $dbh->prepare(q|
+                UPDATE default_circ_rules
+                SET maxissueqty = ?
+            |);
+
+            $sth_search->execute();
+            my $res = $sth_search->fetchrow_hashref();
+            if ($res->{total}) {
+                $sth_update->execute($maxissueqty);
+            } else {
+                $sth_insert->execute($maxissueqty);
+            }
+        } else {
+            my $sth_search = $dbh->prepare("SELECT count(*) AS total
+                                            FROM default_borrower_circ_rules
+                                            WHERE categorycode = ?");
+            my $sth_insert = $dbh->prepare(q|
+                INSERT INTO default_borrower_circ_rules
+                    (categorycode, maxissueqty)
+                    VALUES (?, ?)
+            |);
+            my $sth_update = $dbh->prepare(q|
+                UPDATE default_borrower_circ_rules
+                SET maxissueqty = ?,
+                WHERE categorycode = ?
+            |);
+            $sth_search->execute($branch);
+            my $res = $sth_search->fetchrow_hashref();
+            if ($res->{total}) {
+                $sth_update->execute($maxissueqty, $bor);
+            }
+        }
+    }
+#End new code 
+
        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype, branchcode => $br });
        if($issuingrule){
            $issuingrule->set($params)->store();
@@ -519,7 +564,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     }
 
 }
-
 
 output_html_with_http_headers $input, $cookie, $template->output;
 
