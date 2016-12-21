@@ -40,6 +40,12 @@ use Koha::Patron::HouseboundRoles;
 use Koha::Token;
 use Email::Valid;
 use Module::Load;
+use Koha::IssuingRule;
+use Koha::IssuingRules;
+
+
+
+
 
 #Setting variables
 my $input    = new CGI;
@@ -318,29 +324,29 @@ if ( $start && $start eq 'Start setting up my Koha' ){
              }
 
 
-        # construct flags
-          my $module_flags = 0;
-          my $sth=$dbh->prepare("SELECT bit,flag FROM userflags ORDER BY bit");
-          $sth->execute(); 
-          while (my ($bit, $flag) = $sth->fetchrow_array) {
-              if (exists $all_module_perms{$flag}) {
-                   $module_flags += 2**$bit;
-              }
-          }
+               # construct flags
+               my $module_flags = 0;
+               my $sth=$dbh->prepare("SELECT bit,flag FROM userflags ORDER BY bit");
+               $sth->execute(); 
+               while (my ($bit, $flag) = $sth->fetchrow_array) {
+                    if (exists $all_module_perms{$flag}) {
+                       $module_flags += 2**$bit;
+                    }
+               }
 
-           $sth = $dbh->prepare("UPDATE borrowers SET flags=? WHERE borrowernumber=?");
-           $sth->execute($module_flags, $borrowernumber);
+               $sth = $dbh->prepare("UPDATE borrowers SET flags=? WHERE borrowernumber=?");
+               $sth->execute($module_flags, $borrowernumber);
 
 
-#Error handling checking if the patron was created successfully
-        if(!$borrowernumber){
-            push @messages, {type=> 'error', code => 'error_on_insert'};
-        }else{
-            push @messages, {type=> 'message', code => 'success_on_insert'};
-        }
+               #Error handling checking if the patron was created successfully
+               if(!$borrowernumber){
+                    push @messages, {type=> 'error', code => 'error_on_insert'};
+               }else{
+                    push @messages, {type=> 'message', code => 'success_on_insert'};
+               }
  
-  }
-  }
+         }
+    }
 
 }elsif ( $step && $step == 4){
     my $createitemtype = $input->param('createitemtype');
@@ -385,8 +391,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         $template->param('message' => $message); 
     }
 }elsif ( $step && $step == 5){
-    my $test="a";
-    warn $test;
     
     #Fetching all the existing categories to display in a drop down box
     my $categories;
@@ -400,47 +404,81 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     $template->param(
         itemtypes => $itemtypes,
     );
-    
+   
+    my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
+    $template->param(libraries   => $libraries,
+                     group_types => [
+                {   categorytype => 'searchdomain',
+                    categories   => [ Koha::LibraryCategories->search( { categorytype => 'searchdomain' } ) ],
+                },
+                {   categorytype => 'properties',
+                    categories   => [ Koha::LibraryCategories->search( { categorytype => 'properties' } ) ],
+                },
+                ]
+    );
+
     my $input = CGI->new;
-    my($template, $loggedinuser, $cookie)  =get_template_and_user({
-            template_name => "/onboarding/onboardingstep5.tt",
-            query => $input,
-            type => "intranet",
-            authnotrequired=>0,
-            flagsrequired=> {parameters => 'manage_circ_rules'},
-            debug =>1,
-    });
-    my $type = $input->param('type');
+    my $dbh = C4::Context->dbh;
+
+    my ($template, $loggedinuser, $cookie)
+        = get_template_and_user({template_name => "/onboarding/onboardingstep5.tt",
+                     query => $input,
+                     type => "intranet",
+                     authnotrequired => 0,
+                     flagsrequired => {parameters => 'manage_circ_rules'},
+                     debug => 1,
+                     });
+     
     my $branch = $input->param('branch');
-    if($op eq 'add_form'){
+    unless ( $branch ) {
+           if ( C4::Context->preference('DefaultToLoggedInLibraryCircRules') ) {
+                $branch = Koha::Libraries->search->count() == 1 ? undef : C4::Context::mybranch();
+           }
+           else {
+                $branch = C4::Context::only_my_library() ? ( C4::Context::mybranch() || '*' ) : '*';
+           }
     }
+    $branch = '*' if $branch eq 'NO_LIBRARY_SET';
+    my $op = $input->param('op') || q{};
+
+    if($op eq 'add_validate'){
         
-    elsif($op eq 'add_validate'){
+        my $type = $input->param('type');
+        my $br = $branch;
         my $bor = $input->param('categorycode');
         my $itemtype = $input->param('itemtype');
         my $maxissueqty = $input->param('maxissueqty');
         my $issuelength = $input->param('issuelength');
-        #$issuelength = $issuelength eq q{} ? undef : $issuelength;
         my $lengthunit = $input->param('lengthunit');
         my $renewalsallowed = $input->param('renewalsallowed');
         my $renewalperiod = $input->param('renewalperiod');
-        my $onshelfholds = $input->param('onshelfholds');
-
+        my $onshelfholds = $input->param('onshelfholds') || 0;
+        $maxissueqty =~ s/\s//g;
+        $maxissueqty = undef if $maxissueqty !~ /^\d+/;
+        $issuelength = $issuelength eq q{} ? undef : $issuelength;
+        
         my $params ={
+            branchcode      => $br,
             categorycode    => $bor,
             itemtype        => $itemtype,
             maxissueqty     => $maxissueqty,
             renewalsallowed => $renewalsallowed,
             renewalperiod   => $renewalperiod,
+            issuelength     => $issuelength, 
             lengthunit      => $lengthunit,
             onshelfholds    => $onshelfholds,
         };
-        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype});
-        if($issuingrule){
-            $issuingrule->set($params)->store();
-        }else{
-            Koha::IssuingRule->new()->set($params)->store(); 
-        }
+      
+         my @messages;
+         
+       my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype, branchcode => $br });
+       if($issuingrule){
+           $issuingrule->set($params)->store();
+           push @messages, {type=> 'error', code => 'error_on_insert'};#Stops crash of the onboarding tool if someone makes a circulation rule with the same item type, library and patron categroy as an exisiting circulation rule. 
+
+       }else{
+           Koha::IssuingRule->new()->set($params)->store(); 
+       }
     }
  }
 
