@@ -470,7 +470,71 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         };
       
          my @messages;
-         
+        
+#New code from smart-rules.tt starts here. Needs to be added to library
+#Allows for the 'All' option to work when selecting all libraries for a circulation rule to apply to. 
+ if ($branch eq "*") {
+        my $sth_search = $dbh->prepare("SELECT count(*) AS total
+                                        FROM default_circ_rules");
+        my $sth_insert = $dbh->prepare("INSERT INTO default_circ_rules
+                                        (maxissueqty, onshelfholds)
+                                        VALUES (?, ?)");
+        my $sth_update = $dbh->prepare("UPDATE default_circ_rules
+                                        SET maxissueqty = ?, onshelfholds = ?");
+
+        $sth_search->execute();
+        my $res = $sth_search->fetchrow_hashref();
+        if ($res->{total}) {
+            $sth_update->execute($maxissueqty, $onshelfholds);
+        } else {
+            $sth_insert->execute($maxissueqty, $onshelfholds);
+        }
+    }
+
+
+#Allows for the 'All' option to work when selecting all patron categories for a circulation rule to apply to. 
+        if ($bor eq "*") {
+            my $sth_search = $dbh->prepare("SELECT count(*) AS total
+                                            FROM default_circ_rules");
+            my $sth_insert = $dbh->prepare(q|
+                INSERT INTO default_circ_rules
+                    (maxissueqty)
+                    VALUES (?)
+            |);
+            my $sth_update = $dbh->prepare(q|
+                UPDATE default_circ_rules
+                SET maxissueqty = ?
+            |);
+
+            $sth_search->execute();
+            my $res = $sth_search->fetchrow_hashref();
+            if ($res->{total}) {
+                $sth_update->execute($maxissueqty);
+            } else {
+                $sth_insert->execute($maxissueqty);
+            }
+        }
+#Allows for the 'All' option to work when selecting all itemtypes for a circulation rule to apply to
+        if ($itemtype eq "*") {
+            my $sth_search = $dbh->prepare("SELECT count(*) AS total
+                                        FROM default_branch_circ_rules
+                                        WHERE branchcode = ?");
+            my $sth_insert = $dbh->prepare("INSERT INTO default_branch_circ_rules
+                                        (branchcode, onshelfholds)
+                                        VALUES (?, ?)");
+            my $sth_update = $dbh->prepare("UPDATE default_branch_circ_rules
+                                        SET onshelfholds = ?
+                                        WHERE branchcode = ?");
+            $sth_search->execute($branch);
+            my $res = $sth_search->fetchrow_hashref();
+            if ($res->{total}) {
+                $sth_update->execute($onshelfholds, $branch);
+            } else {
+            $sth_insert->execute($branch, $onshelfholds);
+            }
+        }   
+#End new code
+
        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype, branchcode => $br });
        if($issuingrule){
            $issuingrule->set($params)->store();
@@ -481,7 +545,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
        }
     }
  }
-
 
 
 output_html_with_http_headers $input, $cookie, $template->output;

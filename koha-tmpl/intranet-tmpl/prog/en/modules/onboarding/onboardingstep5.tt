@@ -40,7 +40,7 @@
                     <li>
                         <label for="branch" class="required"> Library branch</label>
                         <select name="branch" id="branch" required="required">
-
+                        <option value="*">All</option> 
                         [% FOREACH library IN libraries %]
                             <option name="branch" value="[% library.branchcode %]"> [% library.branchname %]</option>
                         [% END %]
@@ -51,16 +51,18 @@
                         <label for="categorycode" class="required">Patron Category: </label>
                         <select name="categorycode" id="categorycode" required="required" onchange = "update_categorycode(this);">
                                <!-- <option name="categorycode" value="All">All-->
-                        [% FOREACH category IN categories %]
-                             <option name="categorycode" value = "[% category.categorycode %]"> [%category.description %]</option> 
-                        [%END%]
-                        </select>
+                               <option value="*">All</option> 
+                             [% FOREACH category IN categories %]
+                                <option name="categorycode" value = "[% category.categorycode %]"> [%category.description %]</option> 
+                            [%END%]
+                             </select>
                         <span class="required">Required</span>
                     </li>
 
                     <li>
                         <label for="itemtype"> Item type: </label>
                         <select id="itemtype" name="itemtype" required="required">
+                            <option value="*">All</option> 
                             [% FOREACH item IN itemtypes %]
                                 <option name="itemtype" value = "[% item.itemtype %]"> [% item.itemtype %]
                             [%END%]
