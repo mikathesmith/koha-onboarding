@@ -68,6 +68,22 @@ $(document).ready(function(){
     <h1 align="center"> Welcome to Koha</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
+
+[%  IF DisplayError %]
+<div>
+The error is [% DisplayError %]
+
+
+</div>
+
+
+
+
+
+
+
+
+
 <!--Create a patron screen 2-->
 [% IF op == 'add_validate' %]
     [% IF (nok) %]
@@ -96,7 +112,6 @@ $(document).ready(function(){
             <input type="hidden" name="step" value="4"/>
             <h1 align="left"> New Patron </h1>
             <div>
-            Nok is [% nok %]
                  <p> Success: New patron created!</p>
                  <p> To create another patron, go to Patrons > New Patron. <br>
                 More > Set Permissions in a user page to gain superlibrarian permissions.
