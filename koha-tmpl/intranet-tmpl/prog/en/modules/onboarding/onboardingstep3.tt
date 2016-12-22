@@ -69,45 +69,43 @@ $(document).ready(function(){
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
 
-[%  IF DisplayError %]
-<div>
-The error is [% DisplayError %]
-
-
-</div>
 
 
 
 
 
+[%  IF (nok) %]
+        <form name="errors" method="post" action="onboarding.pl">
+            <input type="hidden" name="step" value="3"/>
+            <h1 align="left">There was an error</h1>
+            <p>Try again </p>
+            <div>
+            <ul>
+            [% IF errorloginexists %]
+                <li id="ERROR_login_exist">Username/password already exists.</li>
+            [% END %]
+            [% IF errorcardnumberexists %]
+                <li id="ERROR_cardnumber">Cardnumber already in use.</li>
+            [% END %]
+            [% IF errorcardnumberlength %]
+                <li id="ERROR_cardnumber">Cardnumber length is incorrect.</li>
+            [% END %]
+            [% IF errorshortpassword %]
+                <li id="ERROR_short_password">Password length is incorrect.</li>
+            [% END %]
+            [% IF errorpasswordmismatch %]
+                <li id="ERROR_password_mismatch">Passwords do not match.</li>
+            [% END %]
+            </ul>
 
-
+            </div>
+            <input type="submit" name="step" value="Try again"/>
+        </form>
 
 
 <!--Create a patron screen 2-->
-[% IF op == 'add_validate' %]
-    [% IF (nok) %]
-    <div class= "dialog alert">
-        <ul>
-            [% IF (error == ERROR_login_exist) %]
-                <li id="ERROR_login_exist">Username/password already exists.</li>
-            [% END %]
-            [% IF ERROR_cardnumber_already_exists %]
-                <li id="ERROR_cardnumber">Cardnumber already in use.</li>
-            [% END %]
-            [% IF ERROR_cardnumber_length %]
-                <li id="ERROR_cardnumber">Cardnumber length is incorrect.</li>
-            [% END %]
-            [% IF (ERROR_short_password) %]
-                <li id="ERROR_short_password">Password length is incorrect.</li>
-            [% END %]
-            [% IF (ERROR_password_mismatch) %]
-                <li id="ERROR_password_mismatch">Passwords do not match.</li>
-            [% END %]
-        </ul>
-    </div>
-    [% END %]
-       <!--New patron created-->
+[% ELSIF op == 'add_validate' %]
+          <!--New patron created-->
         <form name="patrondone" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="4"/>
             <h1 align="left"> New Patron </h1>
@@ -118,7 +116,7 @@ The error is [% DisplayError %]
                 </div>
                  Next up:
                  <input type="submit" name="start" value="Add an item type"/>
-        </form>
+
        <!--Implement a if statement to check if the patron was successfully created
                 <div>
                     <p> Oh no! Patron was not created</p>
@@ -126,16 +124,18 @@ The error is [% DisplayError %]
 [% ELSE %]    
 <!--Create a patron screen 1-->
        <h1 align="left"> Create a new Patron </h1>
+       <legend id="library_management_lgd">Library Management</legend>
+        <p>
+        Now we will create a patron with superlibrarian permissions. Login with this to access Koha as a staff member will all permissions. 
+        </p>
+          
+
+
         <form name="createpatron" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="3"/>
                  <input type="hidden" name="op" value="add_validate" />
-                     <legend id="library_management_lgd">Library Management</legend>
-                     <p>
-                        Now we will create a patron with superlibrarian permissions. Login with this to access Koha as a staff member will all permissions. 
-                     </p>
-                   
-                     <ol>
+                    <ol>
                     <h3>Patron Identity</h3> 
                         <li>
                             <label for="surname" class="required">Surname: </label>

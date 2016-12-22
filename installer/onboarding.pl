@@ -185,7 +185,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
-    my $categorycode = $input->param('categorycode');
+    $categorycode = $input->param('categorycode');
     my $description = $input->param('description');
     my $overduenoticerequired = $input->param('overduenoticerequired');
     my $category_type = $input->param('category_type');
@@ -229,18 +229,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 #Create a patron
 }elsif ( $step && $step == 3 ){
-    my $firstpassword = $input->param('password');
-        my $secondpassword = $input->param('password2');
-
-
-    if ($firstpassword ne $secondpassword){
-            my $DisplayError='Please rewrite the password';
-            warn $DisplayError;
-            $template->param(DisplayError=>$DisplayError,
-            );
-    }
-    
-    my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
+   my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
               group_types => [
                 {   categorytype => 'searchdomain',
@@ -266,6 +255,65 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my @errors;
     my $nok = $input->param('nok');
 
+    my $firstpassword = $input->param('password');
+    my $secondpassword = $input->param('password2');
+    my $cardnumber= $input->param('cardnumber');
+    my $borrowernumber= $input->param('borrowernumber');
+    my $userid=$input->param('userid');
+
+    if ($firstpassword ne $secondpassword){
+#my $DisplayError='Please rewrite the password';
+#           warn $DisplayError;
+#           $template->param(DisplayError=>$DisplayError,
+#           );
+#
+#    if($password ne $password2){
+           push @errors, "ERROR_password_mismatch"
+#      }else{
+#          $newdata{password} = $input->param('password');
+#      }
+    }
+    if(my $error_code = checkcardnumber($cardnumber, $borrowernumber)){
+            push @errors, $error_code == 1
+                ? 'ERROR_cardnumber_already_exists'
+                :$error_code == 2 
+                    ? 'ERROR_cardnumber_length'
+                    :()
+    }
+
+#   if(!(my $error_code= Check_Userid($userid, $borrowernumber))){
+#           push @errors, "ERROR_login_exist";
+#   }
+#  push @errors, "ERROR_password_mismatch" if ($newdata{password} ne $newdata{password2});
+#      push @errors, "ERROR_short_password" if ($newdata{password} && $minpw && $newdata{password} ne '****' && (length($newdata{password}) < $minpw));
+#my $password = $input->param('password');
+#      my $password2 = $input->param('password2');
+#
+#Passing errors to template
+    $nok = $nok || scalar(@errors);
+
+    if($nok){
+
+       foreach my $error (@errors){
+           if ($error eq 'ERROR_password_mismatch'){
+               $template->param(errorpasswordmismatch => 1);
+           }
+           if ($error eq 'ERROR_login_exist'){
+                $template->param(errorloginexists =>1);
+           }
+           if ($error eq 'ERROR_cardnumber_already_exists'){
+                $template->param(errorcardnumberexists => 1);
+           }
+           if ($error eq 'ERROR_cardnumber_length'){
+                $template->param(errorcardnumberlength => 1);
+           }
+           if ($error eq 'ERROR_short_password'){
+                $template->param(errorshortpassword => 1);
+           }
+       }
+        $template->param('nok' => 1);
+        warn $nok;
+    }else{
     my ($template, $loggedinuser, $cookie)= C4::InstallAuth::get_template_and_user({
                 template_name => "/onboarding/onboardingstep3.tt",
                 query => $input,
@@ -287,52 +335,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
          $newdata{branchcode} = $input->param('libraries');
          $newdata{categorycode} = $input->param('categorycode_entry');
          $newdata{userid} = $input->param('userid');
-#   $newdata{password} = $input->param('password');
-#         $newdata{password2} = $input->param('password2');
+         $newdata{password} = $input->param('password');
+         $newdata{password2} = $input->param('password2');
          $newdata{dateexpiry} = '12/10/2016';
          $newdata{privacy} = "default";
 
 #error checks
-        if(my $error_code = checkcardnumber($newdata{cardnumber},$newdata{borrowernumber})){
-            push @errors, $error_code == 1
-                ? 'ERROR_cardnumber_already_exists'
-                :$error_code == 2 
-                    ? 'ERROR_cardnumber_length'
-                    :()
-        }
-
-        unless (Check_Userid($newdata{userid}, $newdata{borrowernumber})){
-            push @errors, "ERROR_login_exist";
-        }
-#  push @errors, "ERROR_password_mismatch" if ($newdata{password} ne $newdata{password2});
-#      push @errors, "ERROR_short_password" if ($newdata{password} && $minpw && $newdata{password} ne '****' && (length($newdata{password}) < $minpw));
-       my $password = $input->param('password');
-       my $password2 = $input->param('password2');
-
-        if($password ne $password2){
-           push @errors, "ERROR_password_mismatch"
-       }else{
-           $newdata{password} = $input->param('password');
-       }
-
-#Passing errors to template
-
-        
-         $template->param('theprivacy' =>   $newdata{privacy});
-
-        
-        
-        
-        $nok = $nok || scalar(@errors);
-      
-        if($nok){
-            foreach my $error (@errors){
-                $template->param($error);
-                
-            }
-            
-            $template->param('nok' => 1);
-        }
+       
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
         my $borrowernumber = &AddMember(%newdata);
 #Create a hash named member2 and fillit with the borrowernumber of the borrower that has just been created 
@@ -376,10 +385,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                }else{
                     push @messages, {type=> 'message', code => 'success_on_insert'};
                }
-            
-         }
+            }
+        }
     }
-
 }elsif ( $step && $step == 4){
     my $createitemtype = $input->param('createitemtype');
     $template->param('createitemtype'=> $createitemtype );
