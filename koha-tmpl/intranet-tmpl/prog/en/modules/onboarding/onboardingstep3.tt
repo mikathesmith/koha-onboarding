@@ -88,10 +88,10 @@ $(document).ready(function(){
                 <li id="ERROR_cardnumber">Cardnumber already in use.</li>
             [% END %]
             [% IF errorcardnumberlength %]
-                <li id="ERROR_cardnumber">Cardnumber length is incorrect.</li>
+                <li id="ERROR_cardnumber">Cardnumber length is incorrect</li>
             [% END %]
             [% IF errorshortpassword %]
-                <li id="ERROR_short_password">Password length is incorrect.</li>
+                <li id="ERROR_short_password">Password length is incorrect, must be at least [% minPasswordLength %] characters long.</li>
             [% END %]
             [% IF errorpasswordmismatch %]
                 <li id="ERROR_password_mismatch">Passwords do not match.</li>

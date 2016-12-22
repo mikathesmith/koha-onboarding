@@ -241,7 +241,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
               ]
     );
 
-# my $categories;
     my $categories= Koha::Patron::Categories->search();
     $template->param(
             categories => $categories,
@@ -261,18 +260,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $borrowernumber= $input->param('borrowernumber');
     my $userid=$input->param('userid');
 
-    if ($firstpassword ne $secondpassword){
-#my $DisplayError='Please rewrite the password';
-#           warn $DisplayError;
-#           $template->param(DisplayError=>$DisplayError,
-#           );
-#
-#    if($password ne $password2){
-           push @errors, "ERROR_password_mismatch"
-#      }else{
-#          $newdata{password} = $input->param('password');
-#      }
-    }
     if(my $error_code = checkcardnumber($cardnumber, $borrowernumber)){
             push @errors, $error_code == 1
                 ? 'ERROR_cardnumber_already_exists'
@@ -281,13 +268,11 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                     :()
     }
 
-#   if(!(my $error_code= Check_Userid($userid, $borrowernumber))){
-#           push @errors, "ERROR_login_exist";
-#   }
-#  push @errors, "ERROR_password_mismatch" if ($newdata{password} ne $newdata{password2});
-#      push @errors, "ERROR_short_password" if ($newdata{password} && $minpw && $newdata{password} ne '****' && (length($newdata{password}) < $minpw));
-#my $password = $input->param('password');
-#      my $password2 = $input->param('password2');
+#  unless(Check_Userid($userid, $borrowernumber)){
+#          push @errors, "ERROR_login_exist";
+#  }
+  push @errors, "ERROR_password_mismatch" if $firstpassword ne $secondpassword;
+  push @errors, "ERROR_short_password" if ($firstpassword && $minpw && $firstpassword ne '****' && (length($firstpassword) < $minpw));
 #
 #Passing errors to template
     $nok = $nok || scalar(@errors);
@@ -469,8 +454,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                      });
      
     my $branch = $input->param('branch');
-    unless ( $branch ) {
-           if ( C4::Context->preference('DefaultToLoggedInLibraryCircRules') ) {
+ unless ( $branch ) {
+          if ( C4::Context->preference('DefaultToLoggedInLibraryCircRules') ) {
                 $branch = Koha::Libraries->search->count() == 1 ? undef : C4::Context::mybranch();
            }
            else {
