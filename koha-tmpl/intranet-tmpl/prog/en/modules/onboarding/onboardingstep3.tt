@@ -4,9 +4,7 @@
 [% USE Price %]
 <!--[% USE Branches %]-->
 [% INCLUDE 'doc-head-open.inc' %]
-[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END     %]
-
-
+[% IF ( finish ) %]<meta http-equiv="refresh" content="10; url=/cgi-bin/koha/mainpage.pl">[% END%]
 [% INCLUDE 'installer-doc-head-close.inc' %]
 [% INCLUDE 'calendar.inc' %]
 [% INCLUDE 'datatables.inc' %]
@@ -16,8 +14,54 @@
 <title>Create Patron</title>
 
 <!--jQuery scripts for creating patron-->
-<!--<script type="text/javascript" src="[% interface %]/[% theme %]/js/members.js"></script>
--->
+<script type-"text/javascript" src="[% interface %]/lib/jquery/plugins/jquery.fixFloat.js"></script>
+<script type="text/javascipt">
+        var MSG_DUPLICATE_PATRON = _("Warning: Duplicate patron");
+        var MSG_PASSWORD_MISMATCH = _("The passwords entered do not match");
+        var MSG_PASSWORD_CONTAINS_TRAILING_SPACES = _("Password contains leading and/or trailing spaces.");
+function check_password(password){
+    if(password.match(/^\s/) || password.match(/\s$/)){
+        return false;
+    }return true;
+}
+
+$(document).ready(function(){
+     $("#createpatron").validate({
+         rules: {
+            borrowernumber: {
+                 required: true,
+                 digits: true
+             },
+            surname:{
+                required: true,
+                letters: true
+            },
+            firstname:{
+                required:true,
+                letters:true
+            },
+            userid: {
+                required: true; 
+                letters_numbers: true
+            },
+            password: {
+                 letters_numbers: true
+            },
+         },
+         messages: {
+             password: {
+                 required: MSG_PASSWORD_MISMATCH
+             },
+             userid: {
+                 required: MSG_DUPLICATE_PATRON
+             }
+         }
+ 
+     });
+
+})
+</script>
+<script type="text/javascript" src="[% interface %]/[% theme %]/js/members.js"></script>
 </head>
 
 <div>
@@ -26,11 +70,33 @@
 </div>
 <!--Create a patron screen 2-->
 [% IF op == 'add_validate' %]
-        <!--New patron created-->
+    [% IF (nok) %]
+    <div class= "dialog alert">
+        <ul>
+            [% IF (error == ERROR_login_exist) %]
+                <li id="ERROR_login_exist">Username/password already exists.</li>
+            [% END %]
+            [% IF ERROR_cardnumber_already_exists %]
+                <li id="ERROR_cardnumber">Cardnumber already in use.</li>
+            [% END %]
+            [% IF ERROR_cardnumber_length %]
+                <li id="ERROR_cardnumber">Cardnumber length is incorrect.</li>
+            [% END %]
+            [% IF (ERROR_short_password) %]
+                <li id="ERROR_short_password">Password length is incorrect.</li>
+            [% END %]
+            [% IF (ERROR_password_mismatch) %]
+                <li id="ERROR_password_mismatch">Passwords do not match.</li>
+            [% END %]
+        </ul>
+    </div>
+    [% END %]
+       <!--New patron created-->
         <form name="patrondone" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="4"/>
             <h1 align="left"> New Patron </h1>
-            <div>   
+            <div>
+            Nok is [% nok %]
                  <p> Success: New patron created!</p>
                  <p> To create another patron, go to Patrons > New Patron. <br>
                 More > Set Permissions in a user page to gain superlibrarian permissions.
@@ -44,7 +110,7 @@
                 </div>-->
 [% ELSE %]    
 <!--Create a patron screen 1-->
-       <h1 align="left"> Create a new Patron </h2>
+       <h1 align="left"> Create a new Patron </h1>
         <form name="createpatron" method="post" action="onboarding.pl">
             <fieldset class="rows">
                  <input type="hidden" name="step" value="3"/>
@@ -53,6 +119,7 @@
                      <p>
                         Now we will create a patron with superlibrarian permissions. Login with this to access Koha as a staff member will all permissions. 
                      </p>
+                   
                      <ol>
                     <h3>Patron Identity</h3> 
                         <li>

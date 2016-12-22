@@ -262,9 +262,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
     my $input = new CGI;
     my $op = $input->param('op') // 'list';
+    
+    my $minpw = C4::Context->preference("minPasswordLength");
+    $template->param("minPasswordLength" => $minpw);
 
     my @messages;
     my @errors;
+    my $nok = $input->param('nok');
 
     my ($template, $loggedinuser, $cookie)= C4::InstallAuth::get_template_and_user({
                 template_name => "/onboarding/onboardingstep3.tt",
@@ -287,11 +291,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
          $newdata{branchcode} = $input->param('libraries');
          $newdata{categorycode} = $input->param('categorycode_entry');
          $newdata{userid} = $input->param('userid');
-         $newdata{password} = $input->param('password');
-         $newdata{password2} = $input->param('password2');
+#   $newdata{password} = $input->param('password');
+#         $newdata{password2} = $input->param('password2');
          $newdata{dateexpiry} = '12/10/2016';
          $newdata{privacy} = "default";
 
+#error checks
         if(my $error_code = checkcardnumber($newdata{cardnumber},$newdata{borrowernumber})){
             push @errors, $error_code == 1
                 ? 'ERROR_cardnumber_already_exists'
@@ -300,6 +305,38 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                     :()
         }
 
+        unless (Check_Userid($newdata{userid}, $newdata{borrowernumber})){
+            push @errors, "ERROR_login_exist";
+        }
+#  push @errors, "ERROR_password_mismatch" if ($newdata{password} ne $newdata{password2});
+#      push @errors, "ERROR_short_password" if ($newdata{password} && $minpw && $newdata{password} ne '****' && (length($newdata{password}) < $minpw));
+       my $password = $input->param('password');
+       my $password2 = $input->param('password2');
+
+        if($password ne $password2){
+           push @errors, "ERROR_password_mismatch"
+       }else{
+           $newdata{password} = $input->param('password');
+       }
+
+#Passing errors to template
+
+        
+         $template->param('theprivacy' =>   $newdata{privacy});
+
+        
+        
+        
+        $nok = $nok || scalar(@errors);
+      
+        if($nok){
+            foreach my $error (@errors){
+                $template->param($error);
+                
+            }
+            
+            $template->param('nok' => 1);
+        }
 
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
         my $borrowernumber = &AddMember(%newdata);
