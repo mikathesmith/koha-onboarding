@@ -6,8 +6,7 @@ use diagnostics;
 
 
 use Modern::Perl;
- use C4::InstallAuth;
-
+use C4::InstallAuth;
 #External modules
 use CGI qw ( -utf8 );
 use List::MoreUtils qw/uniq/;
@@ -43,10 +42,6 @@ use Email::Valid;
 use Module::Load;
 use Koha::IssuingRule;
 use Koha::IssuingRules;
-
-
-
-
 
 #Setting variables
 my $input    = new CGI;
@@ -143,12 +138,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         branchname
     ); 
 
-
 #test
     $template->param('branchcode'=>$branchcode); 
-
     $branchcode =~ s|\s||g; # Use a regular expression to check the value of the inputted branchcode 
-
     #Create a new library object and store the branchcode and @fields array values in this new library object
     $library = Koha::Library->new(
         {   branchcode => $branchcode, 
@@ -157,14 +149,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     );
 
     eval { $library->store; }; #Use the eval{} function to store the library object
-
     if($library){
        $message = 'success_on_insert';
-   }else{
+    }else{
        $message = 'error_on_insert';
-   }
+    }
 
-   $template->param('message' => $message); 
+    $template->param('message' => $message); 
 
 
 #Check if the $step vairable equals 2 i.e. the user has clicked to create a patron category in the create patron category screen 1
@@ -172,14 +163,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $createcat = $query->param('createcat'); #Store the inputted library branch code and name in $createlibrary
     $template->param('createcat'=>$createcat); # Hand the library values back to the template in the createlibrary variable
 
-
     #Initialising values
-    my $input         = new CGI;
     my $searchfield   = $input->param('description') // q||;
     my $categorycode  = $input->param('categorycode');
     my $op            = $input->param('op') // 'list';
     my $message;
     my $category;
+    $template->param('categorycode' =>$categorycode);
 
     my ( $template, $loggedinuser, $cookie ) =  C4::InstallAuth::get_template_and_user(
     {
@@ -195,19 +185,17 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
-        
-    if ( $op eq 'add_validate' ) {
-        my $categorycode = $input->param('categorycode');
-        my $description = $input->param('description');
-        my $overduenoticerequired = $input->param('overduenoticerequired');
-        my $category_type = $input->param('category_type');
-        my $default_privacy = $input->param('default_privacy');
-        my $enrolmentperiod = $input->param('enrolmentperiod');
-        my $enrolmentperioddate = $input->param('enrolmentperioddate') || undef;
+    my $categorycode = $input->param('categorycode');
+    my $description = $input->param('description');
+    my $overduenoticerequired = $input->param('overduenoticerequired');
+    my $category_type = $input->param('category_type');
+    my $default_privacy = $input->param('default_privacy');
+    my $enrolmentperiod = $input->param('enrolmentperiod');
+    my $enrolmentperioddate = $input->param('enrolmentperioddate') || undef;
 
-        #Converts the string into a date format
-        if ( $enrolmentperioddate) {
-            $enrolmentperioddate = output_pref(
+    #Converts the string into a date format
+    if ( $enrolmentperioddate) {
+         $enrolmentperioddate = output_pref(
                     {
                         dt         => dt_from_string($enrolmentperioddate),
                         dateformat => 'iso',
@@ -228,7 +216,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         eval {
             $category->store;
         };
-
         #Error messages
         if($category){
             $message = 'success_on_insert';
@@ -238,10 +225,21 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
         $template->param('message' => $message); 
     
-    }
+#   }
 
 #Create a patron
 }elsif ( $step && $step == 3 ){
+    my $firstpassword = $input->param('password');
+        my $secondpassword = $input->param('password2');
+
+
+    if ($firstpassword ne $secondpassword){
+            my $DisplayError='Please rewrite the password';
+            warn $DisplayError;
+            $template->param(DisplayError=>$DisplayError,
+            );
+    }
+    
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
               group_types => [
@@ -254,15 +252,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
               ]
     );
 
-    my $categories;
-    $categories= Koha::Patron::Categories->search();
+# my $categories;
+    my $categories= Koha::Patron::Categories->search();
     $template->param(
             categories => $categories,
     );
 
-    my $input = new CGI;
     my $op = $input->param('op') // 'list';
-
     my @messages;
     my @errors;
 
@@ -277,7 +273,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
 
     if($op eq 'add_validate'){
-        my %newdata;
+         my %newdata;
 
 #Store the template form values in the newdata hash      
          $newdata{borrowernumber} = $input->param('borrowernumber');       
@@ -300,14 +296,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                     :()
         }
 
-
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
         my $borrowernumber = &AddMember(%newdata);
 #Create a hash named member2 and fillit with the borrowernumber of the borrower that has just been created 
         my %member2;
         $member2{'borrowernumber'}=$borrowernumber;
         
-
         my $flag = $input->param('flag');
      
         if ($input->param('newflags')) {
@@ -345,7 +339,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                }else{
                     push @messages, {type=> 'message', code => 'success_on_insert'};
                }
- 
+            
          }
     }
 

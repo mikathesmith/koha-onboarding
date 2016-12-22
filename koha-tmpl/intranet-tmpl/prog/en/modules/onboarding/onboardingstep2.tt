@@ -266,13 +266,13 @@ $(document).ready(function(){
      </form>
 
 <!--else if the user has not previously imported sample patron categories check if the user has pressed the button name="add_validate" in the create patron category screen 1, and if they have pressed that button then display the below screen with a button to redirect the user to step 3-->
-[% ELSIF op == "add_validate" %]
+[% ELSIF createcat %]
     [% IF message != "error_on_insert" %]
      <form name="createcat" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="3"/>
              <h1 align="left">  New patron category</h1>
              <div>
-                 <p> Success: Patron category created! Your patron category code is [% category.categorycode %] </p>
+                 <p> Success: Patron category created! your categpry code is [% categorycode %] </p>
                  <p> To add another patron category and for more settings<br>
                  go to More->Administration->Patrons & Circulation->Patron Categories</p>
              </div>
@@ -297,7 +297,7 @@ $(document).ready(function(){
        <form id="category_form" method="post" action="onboarding.pl">  
        <fieldset class="rows">
             <input type="hidden" name="step" value="2"/>
-            <input type="hidden" name="op" value="add_validate" />
+            <input type="hidden" name="createcat" value="createcat" />
                 <ol>
                     <li>
                         <label for="categorycode" class="required">Category code: </label>
