@@ -179,7 +179,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
 
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
-    my $categorycode = $input->param('categorycode');
+    $categorycode = $input->param('categorycode');
     my $description = $input->param('description');
     my $overduenoticerequired = $input->param('overduenoticerequired');
     my $category_type = $input->param('category_type');
@@ -257,9 +257,58 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     );
 
     my $op = $input->param('op') // 'list';
+    my $minpw = C4::Context->preference("minPasswordLength");
+    $template->param("minPasswordLength" => $minpw);
+
     my @messages;
     my @errors;
+    my $nok = $input->param('nok');
 
+    my $firstpassword = $input->param('password');
+    my $secondpassword = $input->param('password2');
+    my $cardnumber= $input->param('cardnumber');
+    my $borrowernumber= $input->param('borrowernumber');
+    my $userid=$input->param('userid');
+
+    if(my $error_code = checkcardnumber($cardnumber, $borrowernumber)){
+            push @errors, $error_code == 1
+                ? 'ERROR_cardnumber_already_exists'
+                :$error_code == 2 
+                    ? 'ERROR_cardnumber_length'
+                    :()
+    }
+
+#  unless(Check_Userid($userid, $borrowernumber)){
+#          push @errors, "ERROR_login_exist";
+#  }
+  push @errors, "ERROR_password_mismatch" if $firstpassword ne $secondpassword;
+  push @errors, "ERROR_short_password" if ($firstpassword && $minpw && $firstpassword ne '****' && (length($firstpassword) < $minpw));
+#
+#Passing errors to template
+    $nok = $nok || scalar(@errors);
+
+    if($nok){
+
+       foreach my $error (@errors){
+           if ($error eq 'ERROR_password_mismatch'){
+               $template->param(errorpasswordmismatch => 1);
+           }
+           if ($error eq 'ERROR_login_exist'){
+                $template->param(errorloginexists =>1);
+           }
+           if ($error eq 'ERROR_cardnumber_already_exists'){
+                $template->param(errorcardnumberexists => 1);
+           }
+           if ($error eq 'ERROR_cardnumber_length'){
+                $template->param(errorcardnumberlength => 1);
+           }
+           if ($error eq 'ERROR_short_password'){
+                $template->param(errorshortpassword => 1);
+           }
+       }
+        $template->param('nok' => 1);
+        warn $nok;
+    }else{
     my ($template, $loggedinuser, $cookie)= C4::InstallAuth::get_template_and_user({
                 template_name => "/onboarding/onboardingstep3.tt",
                 query => $input,
@@ -339,7 +388,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
              }
          }
     }
-
 }elsif ( $step && $step == 4){
     my $createitemtype = $input->param('createitemtype');
     $template->param('createitemtype'=> $createitemtype );
@@ -418,8 +466,8 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     });
      
     my $branch = $input->param('branch');
-    unless ( $branch ) {
-           if ( C4::Context->preference('DefaultToLoggedInLibraryCircRules') ) {
+ unless ( $branch ) {
+          if ( C4::Context->preference('DefaultToLoggedInLibraryCircRules') ) {
                 $branch = Koha::Libraries->search->count() == 1 ? undef : C4::Context::mybranch();
            }
            else {
