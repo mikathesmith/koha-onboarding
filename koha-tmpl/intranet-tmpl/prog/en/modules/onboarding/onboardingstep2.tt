@@ -30,11 +30,6 @@ jQuery.validator.addMethod( "enrollment_period", function(){
     }
 }, MSG_ONE_ENROLLMENTPERIOD);
 
-//Testing the jquery
-
-
-
-
 var debug    = "";
 var dformat  = "us";
 var sentmsg = 0;
@@ -192,10 +187,6 @@ $(document).ready(function(){
     });
 });
 
-
-
-
-
 $(document).ready(function(){
      $("#category_form").validate({
          rules: {
@@ -272,7 +263,7 @@ $(document).ready(function(){
             <input type="hidden" name="step" value="3"/>
              <h1 align="left">  New patron category</h1>
              <div>
-                 <p> Success: Patron category created! your categpry code is [% categorycode %] </p>
+                 <p> Success: Patron category created! </p>
                  <p> To add another patron category and for more settings<br>
                  go to More->Administration->Patrons & Circulation->Patron Categories</p>
              </div>
@@ -301,13 +292,13 @@ $(document).ready(function(){
                 <ol>
                     <li>
                         <label for="categorycode" class="required">Category code: </label>
-                        <input type="text" style="text-transform: uppercase;" name="categorycode" value="[% category.categorycode |html %]" size="10" maxlength="10" class="required" required="required" />
+                        <input type="text" pattern="^[A-Z]{1,2}" title="Please enter 1 or 2 capital letters" style="text-transform: uppercase;" name="categorycode" value="[% category.categorycode |html %]" size="10" maxlength="10" class="required" required="required" />
                         <span class="required">Required</span>
                     </li>
 
                     <li>
                         <label for="description" class="required">Description: </label>
-                        <input type="text" style="text-transform:capitalize;" name="description" size="40" maxlength="80" class="required" required="required" value="[% category.description |html %]" />
+                        <input type="text"  pattern="[a-zA-Z ]+" title="Please enter a description sentence of letters only" name="description" size="40" maxlength="80" class="required" required="required" value="[% category.description |html %]" />
                         <span class="required">Required</span>
                     </li>
 

@@ -25,23 +25,9 @@
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
 
-[%  IF DisplayError %]
-<div>
-The error is [% DisplayError %]
-
-
-</div>
-
-
-
-
-
-
-
-
 
 <!--Create a patron screen 2-->
-[% ELSIF op == 'add_validate' %]
+[% IF op == 'add_validate' %]
         <!--New patron created-->
         <form name="patrondone" method="post" action="onboarding.pl">
             <input type="hidden" name="step" value="4"/>
@@ -50,14 +36,10 @@ The error is [% DisplayError %]
                  <p> Success: New patron created!</p>
                  <p> To create another patron, go to Patrons > New Patron. <br>
                 More > Set Permissions in a user page to gain superlibrarian permissions.
-                </div>
-                 Next up:
-                 <input type="submit" name="start" value="Add an item type"/>
+            </div>
+            Next up:
+            <input type="submit" name="start" value="Add an item type"/>
         </form>
-       <!--Implement a if statement to check if the patron was successfully created
-                <div>
-                    <p> Oh no! Patron was not created</p>
-                </div>-->
 [% ELSE %]    
 <!--Create a patron screen 1-->
        <h1 align="left"> Create a new Patron </h2>

@@ -4,10 +4,8 @@ use strict;
 use warnings;
 use diagnostics;
 
-
 use Modern::Perl;
 use C4::InstallAuth;
-#External modules
 use CGI qw ( -utf8 );
 use List::MoreUtils qw/uniq/;
 use Digest::MD5 qw(md5_base64);
@@ -87,7 +85,7 @@ if ( $op && $op eq 'finish' ) { #If the value of $op equals 'finish' then redire
 }
 
 
-#Store the value of the template input name='start' in the variable $start so we can check if the user has pressed this button and starting the onboarding tool process
+#Store the value of the template input name='start' in the variable $start so we can check if the user has pressed this button and started the onboarding tool process
 my $start = $query->param('start');
 $template->param('start'=>$start); #Hand the start variable back to the template
 if ( $start && $start eq 'Start setting up my Koha' ){ 
@@ -103,8 +101,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
               ]
     );
 
-
-#Select any library records from the database and hand them back to the template in the libraries variable. 
 }elsif (  $start && $start eq 'Add a patron category' ){
 
 #Select all the patron category records in the categories database table and store them in the newly declared variable $categories
@@ -117,12 +113,11 @@ if ( $start && $start eq 'Start setting up my Koha' ){
      my $itemtypes = Koha::ItemTypes->search();
      $template->param(
              itemtypes => $itemtypes,
-    );
+    );#Hand the variable itemtypes back to the template
 
 #Check if the $step variable equals 1 i.e. the user has clicked to create a library in the create library screen 1 
 }elsif ( $step && $step == 1 ) {
-
-    my $createlibrary = $query->param('createlibrary'); #Store the inputted library branch code and name in $createlibrary
+    my $createlibrary = $query->param('createlibrary'); #Store the inputted library branch code and name in $createlibrary variable
     $template->param('createlibrary'=>$createlibrary); # Hand the library values back to the template in the createlibrary variable
 
     #store inputted parameters in variables
@@ -131,17 +126,16 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $op               = $input->param('op') || 'list';
     my $message;
     my $library;
-#my @messages;
 
     #Take the text 'branchname' and store it in the @fields array
     my @fields = qw(
         branchname
     ); 
 
-#test
     $template->param('branchcode'=>$branchcode); 
     $branchcode =~ s|\s||g; # Use a regular expression to check the value of the inputted branchcode 
-    #Create a new library object and store the branchcode and @fields array values in this new library object
+
+    #Create a new library object and store the branchcode and @fields array values in this new library object    
     $library = Koha::Library->new(
         {   branchcode => $branchcode, 
             ( map { $_ => scalar $input->param($_) || undef } @fields )
@@ -158,10 +152,10 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     $template->param('message' => $message); 
 
 
-#Check if the $step vairable equals 2 i.e. the user has clicked to create a patron category in the create patron category screen 1
+#Check if the $step variable equals 2 i.e. the user has clicked to create a patron category in the create patron category screen 1
 }elsif ( $step && $step == 2 ){
-    my $createcat = $query->param('createcat'); #Store the inputted library branch code and name in $createlibrary
-    $template->param('createcat'=>$createcat); # Hand the library values back to the template in the createlibrary variable
+    my $createcat = $query->param('createcat'); #Store the inputted category code and name in $createcat
+    $template->param('createcat'=>$createcat);
 
     #Initialising values
     my $searchfield   = $input->param('description') // q||;
@@ -203,34 +197,37 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                     }
             );
         }
-        #Adds to the database
-        $category = Koha::Patron::Category->new({
-                categorycode=> $categorycode,
-                description => $description,
-                overduenoticerequired => $overduenoticerequired,
-                category_type=> $category_type,
-                default_privacy => $default_privacy,
-                enrolmentperiod => $enrolmentperiod,
-                enrolmentperioddate => $enrolmentperioddate,
-        });
-        eval {
-            $category->store;
-        };
-        #Error messages
-        if($category){
-            $message = 'success_on_insert';
-        }else{
-            $message = 'error_on_insert';
-        }
 
-        $template->param('message' => $message); 
+    #Adds a new patron category to the database
+    $category = Koha::Patron::Category->new({
+             categorycode=> $categorycode,
+             description => $description,
+             overduenoticerequired => $overduenoticerequired,
+             category_type=> $category_type,
+             default_privacy => $default_privacy,
+             enrolmentperiod => $enrolmentperiod,
+             enrolmentperioddate => $enrolmentperioddate,
+    });
     
-#   }
+    eval {
+         $category->store;
+    };
+    
+    #Error messages
+    if($category){
+         $message = 'success_on_insert';
+    }else{
+         $message = 'error_on_insert';
+    }
+
+    $template->param('message' => $message); 
+    
+
 
 #Create a patron
 }elsif ( $step && $step == 3 ){
     my $firstpassword = $input->param('password');
-        my $secondpassword = $input->param('password2');
+    my $secondpassword = $input->param('password2');
 
 
     if ($firstpassword ne $secondpassword){
@@ -240,6 +237,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             );
     }
     
+#Find all library records in the database and hand them to the template to display in the library dropdown box
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
               group_types => [
@@ -252,7 +250,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
               ]
     );
 
-# my $categories;
+#Find all patron categories in the database and hand them to the template to display in the patron category dropdown box
     my $categories= Koha::Patron::Categories->search();
     $template->param(
             categories => $categories,
@@ -271,7 +269,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 debug => 1,
     });
 
-
     if($op eq 'add_validate'){
          my %newdata;
 
@@ -288,22 +285,23 @@ if ( $start && $start eq 'Start setting up my Koha' ){
          $newdata{dateexpiry} = '12/10/2016';
          $newdata{privacy} = "default";
 
-        if(my $error_code = checkcardnumber($newdata{cardnumber},$newdata{borrowernumber})){
+         if(my $error_code = checkcardnumber($newdata{cardnumber},$newdata{borrowernumber})){
             push @errors, $error_code == 1
                 ? 'ERROR_cardnumber_already_exists'
                 :$error_code == 2 
                     ? 'ERROR_cardnumber_length'
                     :()
-        }
+         }
 
 #Hand the newdata hash to the AddMember subroutine in the C4::Members module and it creates a patron and hands back a borrowernumber which is being stored
         my $borrowernumber = &AddMember(%newdata);
-#Create a hash named member2 and fillit with the borrowernumber of the borrower that has just been created 
+
+#Create a hash named member2 and fill it with the borrowernumber of the borrower that has just been created 
         my %member2;
         $member2{'borrowernumber'}=$borrowernumber;
         
+#Perform data validation on the flag that has been handed to onboarding.pl by the template
         my $flag = $input->param('flag');
-     
         if ($input->param('newflags')) {
              my $dbh=C4::Context->dbh();
              my @perms = $input->multi_param('flag');
@@ -318,28 +316,27 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                    }
              }
 
+             # construct flags
+             my $module_flags = 0;
+             my $sth=$dbh->prepare("SELECT bit,flag FROM userflags ORDER BY bit");
+             $sth->execute(); 
+             while (my ($bit, $flag) = $sth->fetchrow_array) {
+                  if (exists $all_module_perms{$flag}) {
+                     $module_flags += 2**$bit;
+                  }
+             }
 
-               # construct flags
-               my $module_flags = 0;
-               my $sth=$dbh->prepare("SELECT bit,flag FROM userflags ORDER BY bit");
-               $sth->execute(); 
-               while (my ($bit, $flag) = $sth->fetchrow_array) {
-                    if (exists $all_module_perms{$flag}) {
-                       $module_flags += 2**$bit;
-                    }
-               }
-
-               $sth = $dbh->prepare("UPDATE borrowers SET flags=? WHERE borrowernumber=?");
-               $sth->execute($module_flags, $borrowernumber);
+#Set the superlibrarian permission of the newly created patron to superlibrarian
+             $sth = $dbh->prepare("UPDATE borrowers SET flags=? WHERE borrowernumber=?");
+             $sth->execute($module_flags, $borrowernumber);
 
 
-               #Error handling checking if the patron was created successfully
-               if(!$borrowernumber){
-                    push @messages, {type=> 'error', code => 'error_on_insert'};
-               }else{
-                    push @messages, {type=> 'message', code => 'success_on_insert'};
-               }
-            
+             #Error handling checking if the patron was created successfully
+             if(!$borrowernumber){
+                  push @messages, {type=> 'error', code => 'error_on_insert'};
+             }else{
+                  push @messages, {type=> 'message', code => 'success_on_insert'};
+             }
          }
     }
 
@@ -347,7 +344,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $createitemtype = $input->param('createitemtype');
     $template->param('createitemtype'=> $createitemtype );
     
-    my $input = new CGI;
     my $itemtype_code = $input->param('itemtype');
     my $op = $input->param('op') // 'list';
     my $message;
@@ -362,22 +358,18 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             }
     );
    
-    if($op eq 'add_form'){
-        my $itemtype = Koha::ItemTypes->find($itemtype_code);
-        $template->param(itemtype=> $itemtype,);
-    }elsif($op eq 'add_validate'){
-        my $itemtype = Koha::ItemTypes->find($itemtype_code);
+    if($op eq 'add_validate'){
         my $description = $input->param('description');
 
         #store the input from the form - only 2 fields 
-        my $thisitemtype= Koha::ItemType->new(
+        my $itemtype= Koha::ItemType->new(
             { itemtype    => $itemtype_code,
               description => $description,
             }
         );
-        eval{ $thisitemtype->store; };
+        eval{ $itemtype->store; };
         #Error messages
-        if($thisitemtype){
+        if($itemtype){
             $message = 'success_on_insert';
         }else{
             $message = 'error_on_insert';
@@ -387,19 +379,21 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     }
 }elsif ( $step && $step == 5){
     
-    #Fetching all the existing categories to display in a drop down box
+    #Find all the existing categories to display in a dropdown box in the template
     my $categories;
     $categories= Koha::Patron::Categories->search();
     $template->param(
         categories => $categories,
     );
-    
+   
+    #Find all the exisiting item types to display in a dropdown box in the template
     my $itemtypes;
     $itemtypes= Koha::ItemTypes->search();
     $template->param(
         itemtypes => $itemtypes,
     );
    
+    #Find all the exisiting libraries to display in a dropdown box in the template
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
                      group_types => [
@@ -416,12 +410,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $dbh = C4::Context->dbh;
 
     my ($template, $loggedinuser, $cookie) = C4::InstallAuth::get_template_and_user({template_name => "/onboarding/onboardingstep5.tt",
-                     query => $input,
-                     type => "intranet",
-                     authnotrequired => 0,
-                     flagsrequired => {parameters => 'manage_circ_rules'},
-                     debug => 1,
-                     });
+                query => $input,
+                type => "intranet",
+                authnotrequired => 0,
+                flagsrequired => {parameters => 'manage_circ_rules'},
+                debug => 1,
+    });
      
     my $branch = $input->param('branch');
     unless ( $branch ) {
@@ -436,7 +430,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $op = $input->param('op') || q{};
 
     if($op eq 'add_validate'){
-        
         my $type = $input->param('type');
         my $br = $branch;
         my $bor = $input->param('categorycode');
