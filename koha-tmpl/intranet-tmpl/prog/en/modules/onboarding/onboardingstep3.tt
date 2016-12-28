@@ -114,7 +114,7 @@ $(document).ready(function(){
         </form>
 [% ELSE %]    
 <!--Create a patron screen 1-->
-       <h1 align="left"> Create a new Patron </h1>
+       <h1 align="left"> Create a new Patron kohaalex </h1>
        <legend id="library_management_lgd">Library Management</legend>
         <p>
         Now we will create a patron with superlibrarian permissions. Login with this to access Koha as a staff member will all permissions. 
