@@ -131,12 +131,12 @@ $(document).ready(function(){
                         <li>
                             <label for="surname" class="required">Surname: </label>
 
-                            <input type="text" style="text-transform:capitalize" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
+                            <input type="text"  pattern="[a-zA-Z- ]+" title="Please only enter letters in the surname field" id="surname" name="surname"  value="[% surname %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="firstname" class="required">First Name: </label>
-                            <input style= "text-transform:capitalize;" type="text" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
+                            <input  type="text"  pattern="[a-zA-Z ]+" title="Please only enter letters in the firstname field" name="firstname" id="firstname" size="20" value="[% firstname |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>
@@ -145,7 +145,7 @@ $(document).ready(function(){
                     <ol>
                         <li>
                             <label for="cardnumber" class="required">Card Number: </label>
-                            <input type="number" min="1" id="cardnumber" class="noEnterSubmit valid" name="cardnumber" maxlength="[%maxlength_cardnumber%]" minlength="[%minlength_cardnumber%]" value="[% cardnumber | html %]" class="required" required="required">
+                            <input type="number" min="1" pattern="[1-9]+" title="Please only enter numbers into the card number field" id="cardnumber" class="noEnterSubmit valid" name="cardnumber" maxlength="[%maxlength_cardnumber%]" minlength="[%minlength_cardnumber%]" value="[% cardnumber | html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
@@ -184,17 +184,17 @@ $(document).ready(function(){
                     <h3>OPAC/Staff Login</h3> 
                         <li>
                             <label for="userid" class="required">Username: </label>
-                            <input type="text" name="userid" id ="userid" size="20" value="[% userid %]" class="required" required="required" />
+                            <input type="text" name="userid" id ="userid" pattern="[A-Za-z1-9 ]+" title="Please only enter letters or numbers into this username field" size="20" value="[% userid %]" class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="passwordlabel" class="required">Password: </label>
-                            <input type="password" name="password" id="password" size="20" value="[% member.password |html %]" class="required" required="required">
+                            <input type="password" name="password" pattern="[A-Za-z1-9 ]+" title="Please only enter letters or numbers into this password field" id="password" size="20" value="[% member.password |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="password2" class="required">Confirm password: </label>
-                            <input type="password" id="password2" name="password2" size="20" value="" class="required" required="required">
+                            <input type="password" id="password2" pattern="[A-Za-z1-9 ]+" title="Please only enter letters or numbers into this password field" name="password2" size="20" value="" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>

@@ -66,12 +66,12 @@
                     <ol>
                         <li>
                             <label for="itemtype" class="required">Item type code: </label>
-                            <input type="text" style="text-transform:uppercase;" name="itemtype" id="itemtype" size="10" maxlength="10"  class="required" required="required" />
+                            <input type="text" name="itemtype" pattern="[A-Z]{2,3}" title="Please enter either 2 or 3 capital letters as the item type" id="itemtype" size="10" maxlength="10"  class="required" required="required" />
                             <span class="required">Required</span>
                         </li>
                         <li>
                             <label for="description" class="required">Description: </label>
-                            <input type="text" style="text-transform:capitalize;" name="description" id="description" size="42" value="[% itemtype.description |html %]" class="required" required="required">
+                            <input type="text" name="description" pattern="[A-Za-z1-9 ]+" title="Please only enter letters or numbers into this item type description" id="description" size="42" value="[% itemtype.description |html %]" class="required" required="required">
                             <span class="required">Required</span>
                         </li>
                     </ol>

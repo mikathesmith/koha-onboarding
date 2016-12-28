@@ -71,13 +71,13 @@
                     </li>
                     <li>
                         <label for="maxissueqty" class="required">Current checkouts allowed: </label>
-                        <input type="number" min="0" name="maxissueqty" id="maxissueqty" size="10" maxlength="10" value="" class="required" required="required" />
+                        <input type="number" min="0" name="maxissueqty" pattern="[1-9]+" title="Please only enter numbers" id="maxissueqty" size="10" maxlength="10" value="" class="required" required="required" />
                         <span class="required">Required</span>
                     </li>
                      
                     <li>
                         <label for="issuelength" class="required">Loan Period: </label>
-                        <input type="number" min="0" name="issuelength" id="issuelength" size="10" maxlength="10" value="" class="required" required="required" />
+                        <input type="number" min="0" name="issuelength" pattern="[1-9]+" title="Please only enter numbers" id="issuelength" size="10" maxlength="10" value="" class="required" required="required" />
                         <span class="required">Required</span>
                    </li>
                    <li>
@@ -100,13 +100,13 @@
                      </li>
                      <li>
                         <label for="renewalsallowed" class="required">Renewals Allowed: </label>
-                        <input type="number"min="0" name="renewalsallowed" id="renewalsallowed" size="10" maxlength="10" value="" class="required" required="required" />
+                        <input type="number"min="0" name="renewalsallowed" pattern="[1-9]+" title="Please only enter numbers" id="renewalsallowed" size="10" maxlength="10" value="" class="required" required="required" />
                         <span class="required">Required</span>
                      </li>
 
                      <li>
                         <label for="renewalperiod" class="required">Renewals Period: </label>
-                        <input type="number" min="0"name="renewalperiod" id="renewalperiod" size="10" maxlength="10" value="" class="required" required="required" />
+                        <input type="number" min="0"name="renewalperiod" pattern="[1-9]+" title="Please only enter numbers" id="renewalperiod" size="10" maxlength="10" value="" class="required" required="required" />
                         <span class="required">Required</span>
                      </li>
 
