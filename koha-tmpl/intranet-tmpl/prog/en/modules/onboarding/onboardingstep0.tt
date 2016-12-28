@@ -37,7 +37,7 @@
 
  <!--Header for the koha onboarding tool-->
 <div>
-      <h1 align="center"> Welcome to Koha</h1>
+      <h1 align="center"> Welcome to Koha testing</h1>
       <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
       <h2 align="center"> You haven't installed some sample data, so we're just going to set up a few more things...</h2>
       <form name="startkoha" method="post" action="onboarding.pl">
