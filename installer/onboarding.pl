@@ -10,8 +10,6 @@ use CGI qw ( -utf8 );
 use List::MoreUtils qw/uniq/;
 use Digest::MD5 qw(md5_base64);
 use Encode qw( encode );
-
-#Internal modules 
 use C4::Koha;
 use C4::Auth;
 use C4::Context;
@@ -46,7 +44,7 @@ my $input    = new CGI;
 my $query    = new CGI;
 my $step     = $query->param('step');
 
-#Getting the appropriate template to display to the user-->
+#Getting the appropriate template to display to the user
 my ( $template, $loggedinuser, $cookie) = C4::InstallAuth::get_template_and_user(
      {
         template_name => "/onboarding/onboardingstep" . ( $step ? $step : 0 ) . ".tt",
@@ -87,8 +85,9 @@ if ( $op && $op eq 'finish' ) { #If the value of $op equals 'finish' then redire
 
 #Store the value of the template input name='start' in the variable $start so we can check if the user has pressed this button and started the onboarding tool process
 my $start = $query->param('start');
-$template->param('start'=>$start); #Hand the start variable back to the template
-if ( $start && $start eq 'Start setting up my Koha' ){ 
+$template->param('start'=>$start);
+
+if ( $start && $start eq 'Start setting up my Koha' ){
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
               group_types => [
@@ -100,20 +99,6 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 },
               ]
     );
-
-}elsif (  $start && $start eq 'Add a patron category' ){
-
-#Select all the patron category records in the categories database table and store them in the newly declared variable $categories
-    my $categories = Koha::Patron::Categories->search(); 
-    $template->param(
-        categories => $categories,
-    ); #Hand the variable categories back to the template
-
-}elsif ( $start && $start eq 'Add an item type' ){
-     my $itemtypes = Koha::ItemTypes->search();
-     $template->param(
-             itemtypes => $itemtypes,
-    );#Hand the variable itemtypes back to the template
 
 #Check if the $step variable equals 1 i.e. the user has clicked to create a library in the create library screen 1 
 }elsif ( $step && $step == 1 ) {
@@ -157,6 +142,12 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     my $createcat = $query->param('createcat'); #Store the inputted category code and name in $createcat
     $template->param('createcat'=>$createcat);
 
+#Select all the patron category records in the categories database table and give them to the template
+    my $categories = Koha::Patron::Categories->search(); 
+    $template->param(
+        categories => $categories,
+    );
+
     #Initialising values
     my $searchfield   = $input->param('description') // q||;
     my $categorycode  = $input->param('categorycode');
@@ -175,7 +166,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         debug           => 1,
     }
     );
-    
+
 
     #Once the user submits the page, this code validates the input and adds it
     #to the database as a new patron category 
@@ -208,11 +199,11 @@ if ( $start && $start eq 'Start setting up my Koha' ){
              enrolmentperiod => $enrolmentperiod,
              enrolmentperioddate => $enrolmentperioddate,
     });
-    
+
     eval {
          $category->store;
     };
-    
+
     #Error messages
     if($category){
          $message = 'success_on_insert';
@@ -221,7 +212,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
     }
 
     $template->param('message' => $message); 
-    
+
 
 
 #Create a patron
@@ -236,7 +227,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             $template->param(DisplayError=>$DisplayError,
             );
     }
-    
+
 #Find all library records in the database and hand them to the template to display in the library dropdown box
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
@@ -385,13 +376,13 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                   push @messages, {type=> 'message', code => 'success_on_insert'};
              }
           }
-        }  
+        }
     }
-  
+
  }elsif ( $step && $step == 4){
     my $createitemtype = $input->param('createitemtype');
     $template->param('createitemtype'=> $createitemtype );
-    
+
     my $itemtype_code = $input->param('itemtype');
     my $op = $input->param('op') // 'list';
     my $message;
@@ -405,7 +396,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 debug           => 1,
             }
     );
-   
+
     if($op eq 'add_validate'){
         my $description = $input->param('description');
 
@@ -426,21 +417,21 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         $template->param('message' => $message); 
     }
 }elsif ( $step && $step == 5){
-    
+
     #Find all the existing categories to display in a dropdown box in the template
     my $categories;
     $categories= Koha::Patron::Categories->search();
     $template->param(
         categories => $categories,
     );
-   
+
     #Find all the exisiting item types to display in a dropdown box in the template
     my $itemtypes;
     $itemtypes= Koha::ItemTypes->search();
     $template->param(
         itemtypes => $itemtypes,
     );
-   
+
     #Find all the exisiting libraries to display in a dropdown box in the template
     my $libraries = Koha::Libraries->search( {}, { order_by => ['branchcode'] }, );
     $template->param(libraries   => $libraries,
@@ -464,7 +455,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
                 flagsrequired => {parameters => 'manage_circ_rules'},
                 debug => 1,
     });
-     
+
     my $branch = $input->param('branch');
  unless ( $branch ) {
           if ( C4::Context->preference('DefaultToLoggedInLibraryCircRules') ) {
@@ -491,7 +482,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
         $maxissueqty =~ s/\s//g;
         $maxissueqty = undef if $maxissueqty !~ /^\d+/;
         $issuelength = $issuelength eq q{} ? undef : $issuelength;
-        
+
         my $params ={
             branchcode      => $br,
             categorycode    => $bor,
@@ -503,9 +494,9 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             lengthunit      => $lengthunit,
             onshelfholds    => $onshelfholds,
         };
-      
+
          my @messages;
-        
+
 #New code from smart-rules.tt starts here. Needs to be added to library
 #Allows for the 'All' option to work when selecting all libraries for a circulation rule to apply to. 
  if ($branch eq "*") {
@@ -567,7 +558,7 @@ if ( $start && $start eq 'Start setting up my Koha' ){
             } else {
             $sth_insert->execute($branch, $onshelfholds);
             }
-        }   
+        }
 #End new code
 
        my $issuingrule = Koha::IssuingRules->find({categorycode => $bor, itemtype => $itemtype, branchcode => $br });

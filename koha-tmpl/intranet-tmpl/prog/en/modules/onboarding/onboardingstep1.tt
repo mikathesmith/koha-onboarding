@@ -36,7 +36,7 @@
 
 <!--Header for the koha onboarding tool-->
 <div>
-    <h1 align="center"> Welcome to Koha</h1>
+    <h1 align="center"> Welcome to Koha test if in correct repo</h1>
     <h1 id="logo"><img alt="Koha" style="width:50%;margin:auto;display:block;align:center;"  src="[% interface %]/[% theme %]/img/koha.org-logo.gif"/></h1>
 </div>
  [% IF libraries.count > 0 %]
